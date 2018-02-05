@@ -15,10 +15,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import unicode_literals
 
-import pandas
-
 from . import _api
-
 
 
 # import of Query is at end of module as we have a circular dependency of

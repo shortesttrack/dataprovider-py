@@ -19,10 +19,10 @@ version = '1.0.0'
 setup(
   name='st-dataprovider-python',
   version=version,
-  namespace_packages=['st_library'],
   packages=[
-    'st_library.structured_data',
-    'st_library.unstructured_data'
+    'st_library.dataprovider',
+    'st_library.dataprovider.structured_data',
+    'st_library.dataprovider.unstructured_data'
   ],
   description='shortest track dataprovider',
   author='Fugui Xing',
@@ -38,7 +38,6 @@ setup(
   classifiers=[
       "Programming Language :: Python",
       "Programming Language :: Python :: 2",
-      "Development Status :: 1 - Beta",
       "Environment :: Other Environment",
       "Intended Audience :: Developers",
       "License :: OSI Approved :: Apache Software License",

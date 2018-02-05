@@ -13,10 +13,12 @@
 """Implements BigQuery HTTP API wrapper."""
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from builtins import object
-from . import _http
+
 import time
-from st_library import Library
+from builtins import object
+
+from . import _http
+
 
 class Api(object):
   """A helper class to issue BigQuery HTTP requests."""
