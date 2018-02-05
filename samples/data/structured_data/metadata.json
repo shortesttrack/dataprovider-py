@@ -1,0 +1,10 @@
+{
+  "id": "fghdfhdfg111127",
+  "configuration": {
+    "load": {
+      "maxBadRecords": 0,
+      "sourceFormat": "CSV",
+      "autodetect": true
+    }
+  }
+}
