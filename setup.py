@@ -17,8 +17,9 @@ from setuptools import setup
 version = '1.0.0'
 
 setup(
-  name='st-dataprovider-python',
+  name='st-dataprovider',
   version=version,
+  namespace_packages=['st_library'],
   packages=[
     'st_library.dataprovider',
     'st_library.dataprovider.structured_data',
@@ -51,6 +52,7 @@ for accessing Shortest Track Platform services such as structured data storage.
   install_requires=[
     'httplib2==0.10.3',
     'oauth2client==2.2.0',
+    'future==0.16.0',
     'pandas==0.19.1',
     'pandas-profiling>=1.0.0a2',
     'python-dateutil==2.5.0',

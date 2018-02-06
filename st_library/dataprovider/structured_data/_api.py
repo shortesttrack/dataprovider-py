@@ -16,7 +16,6 @@ from __future__ import unicode_literals
 from builtins import object
 from . import _http
 import time
-from st_library import Library
 
 class Api(object):
   """A helper class to issue BigQuery HTTP requests."""
