@@ -144,17 +144,25 @@ class Http(object):
     response = None
     try:
       log.debug('request: method[%(method)s], url[%(url)s], body[%(data)s]' % locals())
+      status_code = None
       if sys.version > '3':
-        req = urllib.request.Request(url=url, headers=headers, method='GET')
-        with urllib.request.urlopen(req) as response:
-          content = response.read()
+        import requests
+        if method == 'POST':
+          response = requests.post(url=url, headers=headers, data=data)
+          content = response.text
+          status_code = response.status_code
+        elif method == 'GET':
+          response = requests.get(url=url, headers=headers)
+          content = response.text
+          status_code = response.status_code
       else:
         response, content = http.request(url,
                                          method=method,
                                          body=data,
                                          headers=headers)
+        status_code = response.status
 
-      if 200 <= response.status < 300:
+      if 200 <= status_code < 300:
         if raw_response:
           return content
         if type(content) == str:

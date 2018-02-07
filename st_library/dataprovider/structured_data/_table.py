@@ -51,11 +51,8 @@ class Table(object):
         Raises:
           Exception if the name is invalid.
         """
-        #     if context is None:
-        #       context = st_library.context.Context.default()
         self._context = context
         self._api = _api.Api()
-        #     self._name_parts = _utils.parse_table_name(name)
         self._name_parts = name
         self._datasets_id = datasetsid
         self._matrices_id = matricesid
