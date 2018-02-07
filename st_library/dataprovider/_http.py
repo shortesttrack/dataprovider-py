@@ -145,14 +145,14 @@ class Http(object):
     try:
       log.debug('request: method[%(method)s], url[%(url)s], body[%(data)s]' % locals())
       if sys.version > '3':
+        req = urllib.request.Request(url=url, headers=headers, method='GET')
+        with urllib.request.urlopen(req) as response:
+          content = response.read()
+      else:
         response, content = http.request(url,
                                          method=method,
                                          body=data,
                                          headers=headers)
-      else:
-        req = urllib.request.Request(url=url, headers=headers, method='GET')
-        with urllib.request.urlopen(req) as response:
-          content = response.read()
 
       if 200 <= response.status < 300:
         if raw_response:

@@ -14,7 +14,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from builtins import object
-from . import _http
+from st_library.dataprovider import _http
 import time
 
 class Api(object):
