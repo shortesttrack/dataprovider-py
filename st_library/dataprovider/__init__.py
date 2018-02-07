@@ -66,7 +66,7 @@ class Library(Singleton):
         :return dataframe:
         """
         from st_library.dataprovider.structured_data import Table
-        tbl = Table("edac25ec-25e3-4949-9f49-d42124c26bf2", "52db99d3-edfb-44c5-b97a-f09df4402081", "bbb")
+        tbl = Table(matricesid, datasetsid, tablename)
         return (tbl.to_dataframe())
 
     def download_file(self, datasetsid, filename):
