@@ -19,7 +19,6 @@ from builtins import str
 from past.builtins import basestring
 from builtins import object
 
-import copy
 import datetime
 import json
 import urllib.request
@@ -27,7 +26,7 @@ import urllib.parse
 import urllib.error
 import httplib2
 import logging
-import os
+import sys
 import st_library.dataprovider as datapv
 
 
@@ -145,10 +144,16 @@ class Http(object):
     response = None
     try:
       log.debug('request: method[%(method)s], url[%(url)s], body[%(data)s]' % locals())
-      response, content = http.request(url,
-                                       method=method,
-                                       body=data,
-                                       headers=headers)
+      if sys.version > '3':
+        response, content = http.request(url,
+                                         method=method,
+                                         body=data,
+                                         headers=headers)
+      else:
+        req = urllib.request.Request(url=url, headers=headers, method='GET')
+        with urllib.request.urlopen(req) as response:
+          content = response.read()
+
       if 200 <= response.status < 300:
         if raw_response:
           return content
