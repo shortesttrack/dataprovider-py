@@ -170,7 +170,7 @@ class Table(object):
             try:
                 self._load_info()
                 #         self._schema = _schema.Schema(self._info['schema']['fields'])
-                self._schema = _schema.Schema(self._info['fields'])
+                self._schema = _schema.Schema(self._info['matrixScheme']['fieldSchemes'])
 
             except KeyError:
                 raise Exception('Unexpected table response: missing schema')
