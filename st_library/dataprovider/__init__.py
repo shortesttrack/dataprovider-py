@@ -49,7 +49,7 @@ class Library(Singleton):
             return self.token
         else:
             import os
-            return 'Bearer '+os.environ['ST_API_TOKEN ']
+            return 'Bearer '+os.environ['ST_API_TOKEN']
 
     def read_matrix(self, matricesid, datasetsid, tablename):
         """
