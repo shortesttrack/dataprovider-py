@@ -100,10 +100,7 @@ class Http(object):
       headers = {}
 
     headers['user-agent'] = 'GoogleCloudDataLab/1.0'
-#     headers['Authorization'] = "Token "+os.environ['SHORTESTTRACK_API_TOKEN']
-#     headers['Authorization'] = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MTIyYTNkMy1lZmQ2LTQwMjYtOGVlZi04MzMzNmJlNmFkNzciLCJpc3MiOiJzaG9ydGVzdHRyYWNrLXVhYSIsImF1dGhvcml0aWVzIjpbIlJPTEVfQ09NUEFOWV9BRE1JTiJdLCJkamFuZ29Vc2VySWQiOiI5OTkiLCJjbGllbnRfaWQiOiJ3ZWJfYXBwIiwiYXVkIjoid2ViX2FwcCIsImNvbXBhbnlJZCI6InRlc3Rfc2hvcnRlc3R0cmFja19mdW5jdGlvbmFsaXR5IiwiZGphbmdvVG9rZW4iOiI5NjUxYmQzZGJiZWExZDQ5YjM1MzhjZjRjMDU1MWMzODhiOGVlNzZlIiwic2NvcGUiOlsib3BlbmlkIl0sImV4cCI6MTUxNTc3OTc1MSwiaWF0IjoxNTE1NDc5NzUxLCJqdGkiOiJjNmIzNjFjYy1jNWE5LTRjMDMtOGQxOC1kM2QxMzA0ODVlYzMiLCJlbWFpbCI6InB1YmxpYy1hZG1pbkBsb2NhbGhvc3QifQ.KTRtKFleC0NHPxqldlXhb6SxIGHSh2WEAboyLg5NZOteZ-4IceCWA06yjVuO8XX85Q3Z5rSrTrBM7RG2Tj0EewfrJknnNLAQ5-Yw23dO7TgZLkvNufbykGjr4VdxvofIsr4jw4xghV3z3HT-buxKMxg32PFx24N1ciNZ8l66wSLVHNwVYFXsjhNzbUV7YshmVibPQnqjavI9JL9Zie44AKUauwkGNpuC9a-H4iOp_iHQxG9EgW4-v932T_gurPfLEfVsvK2K-cL7q9KBpzB84tFUeBgkCrLCMvhjaYwMJ695FDu8sQ6jcSWzCIH8PMWHSG__OhurgJKpuR-jgvGFJQ"
     headers['Authorization'] = datapv.Library().get_token()
-    # headers['Authorization'] = 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MTIyYTNkMy1lZmQ2LTQwMjYtOGVlZi04MzMzNmJlNmFkNzciLCJpc3MiOiJzaG9ydGVzdHRyYWNrLXVhYSIsImF1dGhvcml0aWVzIjpbIlJPTEVfQ09NUEFOWV9BRE1JTiJdLCJkamFuZ29Vc2VySWQiOiI5OTkiLCJjbGllbnRfaWQiOiJ3ZWJfYXBwIiwiYXVkIjoid2ViX2FwcCIsImNvbXBhbnlJZCI6InRlc3Rfc2hvcnRlc3R0cmFja19mdW5jdGlvbmFsaXR5IiwiZGphbmdvVG9rZW4iOiI5NjUxYmQzZGJiZWExZDQ5YjM1MzhjZjRjMDU1MWMzODhiOGVlNzZlIiwic2NvcGUiOlsib3BlbmlkIl0sImV4cCI6MTUxNTg3MTg4MCwiaWF0IjoxNTE1NTcxODgwLCJqdGkiOiIwNzA5ZGMwZi0yMDNiLTRmOTQtYjliZS1iMjg1ZjAxZGNjOGEiLCJlbWFpbCI6InB1YmxpYy1hZG1pbkBsb2NhbGhvc3QifQ.cUmuy802LTcBzMeBxclH2QrTQkB6vjCvdqFdkYgDYuBZ_vC8ssxPubUl2_sUJLdhZGVuPMdJRYYNZ99iBdreEotOYo_npil0cS4CmuxgRobKGR5j6b6ZoHQHMyNjrmQXBHCfEdaxM56_J-FZ5_FwjmS3lacSV3ws7KB9mf7T4snUlTOH94XQb3njPCBkfqgp5yewMmB1xkwYQx7NHfC_ZOfsxrmPDyC1MfPuwIhB42e6s1K7OFWcgOkglD8mNCKQJY5gxAjl3HbjJwA_acgAd67t3c4QBhihuLGQFDgoY5ZbjkY5-kk7GspyTqKO63d_eI9qyR7JmSQBEAaZlNlG0A'
     # Add querystring to the URL if there are any arguments.
     if args is not None:
       qs = urllib.parse.urlencode(args)
@@ -133,11 +130,6 @@ class Http(object):
 
     http = Http.http
 
-    # Authorize with credentials if given.
-#     if credentials is not None:
-#       # Make a copy of the shared http instance before we modify it.
-#       http = copy.copy(http)
-#       http = google_auth_httplib2.AuthorizedHttp(credentials)
     if stats is not None:
       stats['duration'] = datetime.datetime.utcnow()
 

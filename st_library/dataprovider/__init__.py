@@ -28,7 +28,7 @@ class Library(Singleton):
 
     def set_configuration_uuid(self, configuration_uuid):
         if self.configuration_uuid:
-            raise RuntimeError('The configuration_uuid is already set.')
+            raise Warning('The configuration_uuid is already set.')
 
         self.configuration_uuid = configuration_uuid
 
@@ -40,11 +40,11 @@ class Library(Singleton):
         if self.configuration_uuid:
             return self.configuration_uuid
 
-        raise AttributeError('The configuration_uuid is not defined in Library.')
+        raise Warning('The configuration_uuid is not defined in Library.')
 
     def set_token(self, token):
         if self.token:
-            raise RuntimeError('The token is already set.')
+            raise Warning('The token is already set.')
 
         self.token = token
 
@@ -58,7 +58,7 @@ class Library(Singleton):
         else:
             import os
             return 'Bearer '+os.environ['ST_API_TOKEN ']
-        raise AttributeError('The token is not defined in Library.')
+        raise Warning('The token is not defined in Library.')
 
     def read_matrix(self, matricesid, datasetsid, tablename):
         """

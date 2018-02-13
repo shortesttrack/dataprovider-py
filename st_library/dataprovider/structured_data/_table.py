@@ -56,7 +56,6 @@ class Table(object):
         self._name_parts = name
         self._datasets_id = datasetsid
         self._matrices_id = matricesid
-        #     self._full_name = '%s:%s.%s%s' % self._name_parts
         self._info = None
         self._cached_page = None
         self._cached_page_index = 0
@@ -169,7 +168,6 @@ class Table(object):
         if not self._schema:
             try:
                 self._load_info()
-                #         self._schema = _schema.Schema(self._info['schema']['fields'])
                 self._schema = _schema.Schema(self._info['matrixScheme']['fieldSchemes'])
 
             except KeyError:
