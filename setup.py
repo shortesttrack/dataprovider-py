@@ -14,7 +14,7 @@
 
 from setuptools import setup
 
-version = '1.0.1'
+version = '1.0.2'
 
 setup(
   name='st-dataprovider',
@@ -29,7 +29,7 @@ setup(
   author='Fugui Xing',
   author_email='admin@shortesttrack.com',
   url='https://github.com/shortesttrack/dataprovider-py',
-  download_url='https://github.com/shortesttrack/dataprovider-py/archive/v1.0.1.zip',
+  download_url='https://github.com/shortesttrack/dataprovider-py/archive/v1.0.2.zip',
   keywords=[
     'Shortest Track',
     'st_library',
@@ -39,6 +39,7 @@ setup(
   classifiers=[
       "Programming Language :: Python",
       "Programming Language :: Python :: 2",
+      "Programming Language :: Python :: 3",
       "Environment :: Other Environment",
       "Intended Audience :: Developers",
       "License :: OSI Approved :: Apache Software License",
