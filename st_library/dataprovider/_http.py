@@ -99,7 +99,7 @@ class Http(object):
     if headers is None:
       headers = {}
 
-    headers['user-agent'] = 'GoogleCloudDataLab/1.0'
+    headers['user-agent'] = 'st-dataprovider/1.0'
     headers['Authorization'] = datapv.Library().get_token()
     # Add querystring to the URL if there are any arguments.
     if args is not None:
@@ -164,13 +164,11 @@ class Http(object):
         else:
           return json.loads(str(content, encoding='UTF-8'))
       else:
-        raise RequestException(response.status, content)
+        raise RequestException(status_code, content)
     except ValueError:
       raise Exception('Failed to process HTTP response.')
-    except httplib2.HttpLib2Error:
-      raise Exception('Failed to send HTTP request.')
     finally:
       if stats is not None:
         stats['data_size'] = len(data)
-        stats['status'] = response.status
+        stats['status'] = status_code
         stats['duration'] = (datetime.datetime.utcnow() - stats['duration']).total_seconds()

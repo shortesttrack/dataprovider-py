@@ -1,0 +1,19 @@
+# import st_library.dataprovider as datapv
+#
+# st_lib = datapv.Library()
+# st_lib.set_token('Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MTIyYTNkMy1lZmQ2LTQwMjYtOGVlZi04MzMzNmJlNmFkNzciLCJhdWQiOiJ3ZWJfYXBwIiwiY29tcGFueUlkIjoidGVzdF9zaG9ydGVzdHRyYWNrX2Z1bmN0aW9uYWxpdHkiLCJzY29wZSI6WyJvcGVuaWQiXSwiaXNzIjoic2hvcnRlc3R0cmFjay11YWEiLCJleHAiOjE1MTg3ODg1MTMsImlhdCI6MTUxODQ4ODUxMywiYXV0aG9yaXRpZXMiOlsiUk9MRV9DT01QQU5ZX0FETUlOIl0sImp0aSI6IjUzYmNiNmQ5LTMwZWQtNDE2ZS04ZGFhLWE4NTA3NDE2MmJjYSIsImVtYWlsIjoicHVibGljLWFkbWluQGxvY2FsaG9zdCIsImNsaWVudF9pZCI6IndlYl9hcHAifQ.FxvCWd-D8LcEsZrRzTI5OqhyZAJbw7VQpNkOJLOebMkc9cIlkcC4Ucr5KsDAXqDfmA52I5jp6dOziXlVGOPKAv6GDZ0lFb107srdQKxbvUCaC_H31wPmQUxnuOSpLkwD6HdAClrAZriWRsOd6wxOFaRJqBavq_v3G5lP_NkA23UK_DU76clVQ80AockOdb8Xq5BPiloZl9BGH7UR_N9XPdLg0JwxrGkWzUZpjFf4Eq2lhQ2_RpJKhxLMedZt8YwPOPMDuDxe9zLIftJ12Q4p6QqXGomgDKspR4IaO309qRaHhR81DezWyHTToS0xXk3EeE4GkKqtP9qU4HVrBsjqtA')
+# print(st_lib.upload_file("19a29b9b-bea2-40fb-89c4-555bba829539","../data/unstructured_data/RandomForest_train.rds"))
+# import requests
+# file_path = '/home/st/workspace/dataprovider-py/samples/data/unstructured_data/RandomForest_train.rds'
+# headers = {}
+# headers['user-agent'] = 'GoogleCloudDataLab/1.0'
+# headers['Authorization'] = 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MTIyYTNkMy1lZmQ2LTQwMjYtOGVlZi04MzMzNmJlNmFkNzciLCJhdWQiOiJ3ZWJfYXBwIiwiY29tcGFueUlkIjoidGVzdF9zaG9ydGVzdHRyYWNrX2Z1bmN0aW9uYWxpdHkiLCJzY29wZSI6WyJvcGVuaWQiXSwiaXNzIjoic2hvcnRlc3R0cmFjay11YWEiLCJleHAiOjE1MTg3ODg1MTMsImlhdCI6MTUxODQ4ODUxMywiYXV0aG9yaXRpZXMiOlsiUk9MRV9DT01QQU5ZX0FETUlOIl0sImp0aSI6IjUzYmNiNmQ5LTMwZWQtNDE2ZS04ZGFhLWE4NTA3NDE2MmJjYSIsImVtYWlsIjoicHVibGljLWFkbWluQGxvY2FsaG9zdCIsImNsaWVudF9pZCI6IndlYl9hcHAifQ.FxvCWd-D8LcEsZrRzTI5OqhyZAJbw7VQpNkOJLOebMkc9cIlkcC4Ucr5KsDAXqDfmA52I5jp6dOziXlVGOPKAv6GDZ0lFb107srdQKxbvUCaC_H31wPmQUxnuOSpLkwD6HdAClrAZriWRsOd6wxOFaRJqBavq_v3G5lP_NkA23UK_DU76clVQ80AockOdb8Xq5BPiloZl9BGH7UR_N9XPdLg0JwxrGkWzUZpjFf4Eq2lhQ2_RpJKhxLMedZt8YwPOPMDuDxe9zLIftJ12Q4p6QqXGomgDKspR4IaO309qRaHhR81DezWyHTToS0xXk3EeE4GkKqtP9qU4HVrBsjqtA'
+# url='https://shortesttrack.com/api/data/blob-repositories/19a29b9b-bea2-40fb-89c4-555bba829539?name=RandomForest_train.rds'
+# with open(file_path, 'rb') as fp:
+#     r = requests.Request(method='POST',url=url, data=fp.read(), headers=headers)
+#     prepped = r.prepare()
+#     s = requests.Session()
+#     resp = s.send(prepped)
+#     if resp.status_code != 200:
+#         print(resp.status_code)
+

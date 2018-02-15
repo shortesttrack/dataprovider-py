@@ -65,7 +65,7 @@ class Table(object):
         """Loads metadata about this table."""
         if self._info is None:
             try:
-                self._info = self._api.tables_get(self._name_parts, self._matrices_id)
+                self._info = self._api.tables_get(self._matrices_id)
             except Exception as e:
                 raise e
 

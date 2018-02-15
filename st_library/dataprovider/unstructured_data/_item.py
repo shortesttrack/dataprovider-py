@@ -60,10 +60,10 @@ class Item(object):
         """
         raw_data =  self._api.download_object(self._datasets_id, filename)
 
-        with open("0a7c2a8d_nohash_0.tar", 'wb') as f:
+        with open(filename, 'wb') as f:
             f.write(raw_data)
 
-        return "0a7c2a8d_nohash_0.tar"
+        return filename
 
     def upload_file(self, filename=None):
         """ Upload files to gcs.

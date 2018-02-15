@@ -80,12 +80,12 @@ class Api(object):
     """
     url = Api._DATA_ENDPOINT + (Api._FILE_UPLOAD_PATH % (datasetsid, file_name))
 
-    filepath1 = r"datafile.txt"
+    filepath1 = file_name
     boundary = '----------%s' % hex(int(time.time() * 1000))
     data = []
     data.append('--%s' % boundary)
     fr1 = open(filepath1, 'rb')
-    data.append('Content-Disposition: form-data; name="metadata"; filename="datafile.txt"')
+    data.append('Content-Disposition: form-data; name="metadata"; filename="'+file_name+'"')
     data.append('Content-Type: %s\r\n' % 'application/json')
     data.append(fr1.read())
     fr1.close()
