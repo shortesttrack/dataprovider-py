@@ -43,11 +43,11 @@ class Table(object):
         """Initializes an instance of a Table object. The Table need not exist yet.
 
         Args:
-          name: the name of the table either as a string or a 3-part tuple (projectid, datasetid, name).
-            If a string, it must have the form '<project>:<dataset>.<table>' or '<dataset>.<table>'.
-          context: an optional Context object providing project_id and credentials. If a specific
-            project id or credentials are unspecified, the default ones configured at the global
-            level are used.
+          matricesid:
+          datasetsid:
+          name: the name of the table.
+          context:
+
         Raises:
           Exception if the name is invalid.
         """
@@ -189,3 +189,12 @@ class Table(object):
           json_data:  the records of the matrix.
         """
         response = self._api.insert_data(self._datasets_id, self._name_parts, json_data)
+
+    def get_parameter_data(self, scriptid):
+        """ Insert streams data into matrix.
+
+        Args:
+          json_data:  the records of the matrix.
+        """
+        script_dict = self._api.tables_get_parameter(scriptid)
+        return script_dict['parameters']

@@ -60,6 +60,15 @@ class Library(Singleton):
         tbl = Table(matricesid, datasetsid, tablename)
         return (tbl.to_dataframe())
 
+    def getParameter(self, scriptid):
+        """
+        Retrieves the table data.
+        :return dataframe:
+        """
+        from st_library.dataprovider.structured_data import Table
+        tbl = Table()
+        return (tbl.get_parameter_data(scriptid))
+
     def download_file(self, datasetsid, filename):
         """
         Download files to disk.

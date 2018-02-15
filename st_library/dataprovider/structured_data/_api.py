@@ -26,6 +26,7 @@ class Api(object):
   _DATA_ENDPOINT = 'https://shortesttrack.com'
   _METADATA_MATRICES_PATH = '/api/metadata/matrices/%s'
   _DATA_GET_PATH = '/api/data/datasets/%s/matrices/%s/data'
+  _PARAMETER_GET_PATH = '/api/metadata/script-execution-configurations/%s'
   _DATA_UPLOAD_PATH = '/api/data/datasets/%s/matrices/%s/upload'
   _DATA_INSERT_PATH = '/api/data/datasets/%s/matrices/%s/insert'
 
@@ -38,11 +39,11 @@ class Api(object):
     """
 
 
-  def tables_get(self, table_name, matrices_id):
+  def tables_get(self, matrices_id):
     """Issues a request to retrieve information about a table.
 
     Args:
-      table_name: a tuple representing the full name of the table.
+      matrices_id: .
     Returns:
       A parsed result object.
     Raises:
@@ -51,6 +52,18 @@ class Api(object):
     url = Api._METADATA_ENDPOINT + (Api._METADATA_MATRICES_PATH % matrices_id)
     return _http.Http.request(url)
 
+  def tables_get_parameter(self, script_id):
+    """Issues a request to retrieve the parameter of the script execution configuration.
+
+    Args:
+      script_id:
+    Returns:
+      A parsed result object.
+    Raises:
+      Exception if there is an error performing the operation.
+    """
+    url = Api._METADATA_ENDPOINT + (Api._PARAMETER_GET_PATH % script_id)
+    return _http.Http.request(url)
 
   def tabledata_list(self, datasetsid, table_name, start_index=None, max_results=None, page_token=None):
     """ Retrieves the contents of a table.
