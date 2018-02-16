@@ -11,12 +11,6 @@
 # the License.
 
 """Implements BigQuery related data parsing helpers."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import unicode_literals
-from builtins import zip
-from builtins import str
-from builtins import object
 
 import datetime
 

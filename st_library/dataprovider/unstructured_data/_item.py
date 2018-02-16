@@ -11,10 +11,6 @@
 # the License.
 
 """Implements Table, and related Table BigQuery APIs."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import unicode_literals
-
 from . import _api
 
 
@@ -65,13 +61,13 @@ class Item(object):
 
         return filename
 
-    def upload_file(self, filename=None):
+    def upload_file(self, filename=None, filepath=None):
         """ Upload files to gcs.
 
         Args:
           filename: the name of the file.
         """
-        return self._api.upload_object(self._datasets_id, filename)
+        return self._api.upload_object(self._datasets_id, filename, filepath)
 
     def delete_file(self, filename=None):
         """ Delete files from gcs.

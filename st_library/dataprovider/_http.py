@@ -11,30 +11,14 @@
 # the License.
 
 """Implements HTTP client helper functionality."""
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from future import standard_library
-standard_library.install_aliases()  # noqa
-from builtins import str
-from past.builtins import basestring
-from builtins import object
-
 import datetime
 import json
-import urllib.request
-import urllib.parse
-import urllib.error
-import httplib2
 import logging
 import sys
 import st_library.dataprovider as datapv
 
 
 log = logging.getLogger(__name__)
-
-
-# TODO(nikhilko): Start using the requests library instead.
-
 
 class RequestException(Exception):
 
@@ -60,16 +44,6 @@ class RequestException(Exception):
 class Http(object):
   """A helper class for making HTTP requests.
   """
-
-  # Reuse one Http object across requests to take advantage of Keep-Alive, e.g.
-  # for BigQuery queries that requires at least ~5 sequential http requests.
-  #
-  # TODO(nikhilko):
-  # SSL cert validation seemingly fails, and workarounds are not amenable
-  # to implementing in library code. So configure the Http object to skip
-  # doing so, in the interim.
-  http = httplib2.Http(timeout = 50000)
-  http.disable_ssl_certificate_validation = True
 
   def __init__(self):
     pass
@@ -101,10 +75,6 @@ class Http(object):
 
     headers['user-agent'] = 'st-dataprovider/1.0'
     headers['Authorization'] = datapv.Library().get_token()
-    # Add querystring to the URL if there are any arguments.
-    if args is not None:
-      qs = urllib.parse.urlencode(args)
-      url = url + '?' + qs
 
     # Setup method to POST if unspecified, and appropriate request headers
     # if there is data to be sent within the request.
@@ -118,7 +88,6 @@ class Http(object):
         if 'Content-Type' not in headers:
           data = json.dumps(data)
           headers['Content-Type'] = 'application/json'
-      headers['Content-Length'] = str(len(data))
     else:
       if method == 'POST':
         headers['Content-Length'] = '0'
@@ -127,8 +96,6 @@ class Http(object):
     # was no data to be POSTed, then default to GET request.
     if method is None:
       method = 'GET'
-
-    http = Http.http
 
     if stats is not None:
       stats['duration'] = datetime.datetime.utcnow()
@@ -148,11 +115,20 @@ class Http(object):
           content = response.text
           status_code = response.status_code
       else:
-        response, content = http.request(url,
-                                         method=method,
-                                         body=data,
-                                         headers=headers)
-        status_code = response.status
+        import urllib2
+        request = urllib2.Request(url, data, headers)
+        try:
+          content = urllib2.urlopen(request).read()
+        except urllib2.HTTPError as e:
+          status_code = e.code
+        # ...
+        except urllib2.URLError as e:
+        # Not an HTTP-specific error (e.g. connection refused)
+        # ...
+          status_code = e.code
+        else:
+          # 200
+          status_code = 200
 
       if 200 <= status_code < 300:
         if raw_response:

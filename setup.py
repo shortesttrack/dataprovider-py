@@ -14,7 +14,7 @@
 
 from setuptools import setup
 
-version = '1.0.5'
+version = '1.0.6'
 
 setup(
   name='st-dataprovider',
@@ -29,7 +29,7 @@ setup(
   author='Fugui Xing',
   author_email='admin@shortesttrack.com',
   url='https://github.com/shortesttrack/dataprovider-py',
-  download_url='https://github.com/shortesttrack/dataprovider-py/archive/v1.0.5.zip',
+  download_url='https://github.com/shortesttrack/dataprovider-py/archive/v1.0.6.zip',
   keywords=[
     'Shortest Track',
     'st_library',
@@ -37,7 +37,6 @@ setup(
   ],
   license="Apache Software License",
   classifiers=[
-      "Programming Language :: Python",
       "Programming Language :: Python :: 2",
       "Programming Language :: Python :: 3",
       "Environment :: Other Environment",
@@ -51,19 +50,8 @@ Support package for Shortest Track Library. This provides Python APIs
 for accessing Shortest Track Platform services such as structured data storage.
   """,
   install_requires=[
-    'httplib2==0.10.3',
-    'oauth2client==2.2.0',
-    'future==0.16.0',
-    'pandas==0.19.1',
-    'pandas-profiling>=1.0.0a2',
-    'python-dateutil==2.5.0',
-    'pytz>=2015.4',
-    'pyyaml==3.11',
-    'requests==2.9.1',
-    'ipykernel==4.5.2',
-    'psutil==4.3.0',
-    'jsonschema==2.6.0',
-    'six==1.10.0',
-    'urllib3==1.22',
+    'poster==0.8.1',
+    'requests-toolbelt==0.8.0',
+    'pandas==0.19.1'
   ]
 )

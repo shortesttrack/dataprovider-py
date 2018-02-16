@@ -11,16 +11,12 @@
 # the License.
 
 """Implements BigQuery HTTP API wrapper."""
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from builtins import object
 from st_library.dataprovider import _http
 import time
 
 class Api(object):
   """A helper class to issue BigQuery HTTP requests."""
 
-  # TODO(nikhilko): Use named placeholders in these string templates.
   # _ENDPOINT = 'https://shortesttrack.com'
   _METADATA_ENDPOINT = 'https://shortesttrack.com'
   _DATA_ENDPOINT = 'https://shortesttrack.com'

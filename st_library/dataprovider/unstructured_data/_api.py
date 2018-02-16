@@ -11,19 +11,14 @@
 # the License.
 
 """Implements BigQuery HTTP API wrapper."""
-from __future__ import absolute_import
-from __future__ import unicode_literals
 
-import time
-from builtins import object
+import sys
 
 from st_library.dataprovider import _http
 
 
 class Api(object):
   """A helper class to issue BigQuery HTTP requests."""
-
-  # TODO(nikhilko): Use named placeholders in these string templates.
   # _ENDPOINT = 'https://shortesttrack.com'
   _METADATA_ENDPOINT = 'https://shortesttrack.com'
   _DATA_ENDPOINT = 'https://shortesttrack.com'
@@ -68,11 +63,12 @@ class Api(object):
     download_url = _http.Http.request(url, raw_response=True)
     return _http.Http.request(download_url, raw_response=True)
 
-  def upload_object(self, datasetsid, file_name):
+  def upload_object(self, datasetsid, file_name, file_path):
     """ Upload file to gcs.
 
     Args:
       file_name: the name of the file.
+      file_path: the path of the file.
     Returns:
       A result object.
     Raises:
@@ -80,24 +76,36 @@ class Api(object):
     """
     url = Api._DATA_ENDPOINT + (Api._FILE_UPLOAD_PATH % (datasetsid, file_name))
 
-    filepath1 = file_name
-    boundary = '----------%s' % hex(int(time.time() * 1000))
-    data = []
-    data.append('--%s' % boundary)
-    fr1 = open(filepath1, 'rb')
-    data.append('Content-Disposition: form-data; name="metadata"; filename="'+file_name+'"')
-    data.append('Content-Type: %s\r\n' % 'application/json')
-    data.append(fr1.read())
-    fr1.close()
+    if sys.version > '3':
+      from requests_toolbelt.multipart.encoder import MultipartEncoder
 
-    data.append('--%s--\r\n' % boundary)
+      multipart_data = MultipartEncoder(
+        fields={
+          # a file upload field
+          'file': ('RandomForest_train.zip',
+                   open(file_path+file_name,
+                        'rb'), 'text/plain')
+        }
+      )
+      headers = {}
+      headers['Content-Type'] = multipart_data.content_type
 
-    http_body = '\r\n'.join(data)
+      return _http.Http.request(url=url, data=multipart_data, headers=headers, method='POST')
+    else:
+      from poster.encode import multipart_encode
+      from poster.streaminghttp import register_openers
 
-    headers = {}
-    headers['Content-Type'] = 'multipart/form-data; boundary=%s' % boundary
+      # Register the streaming http handlers with urllib2
+      register_openers()
 
-    return _http.Http.request(url=url, data=http_body, headers=headers, method='POST')
+      # Start the multipart/form-data encoding of the file
+      # "file" is the name of the parameter, which is normally set
+      # via the "name" parameter of the HTML <input> tag.
+      # headers contains the necessary Content-Type and Content-Length
+      # datagen is a generator object that yields the encoded parameters
+      datagen, headers = multipart_encode(
+        {"file": open(file_path+file_name)})
+      return _http.Http.request(url=url, data=datagen, headers=headers, method='POST')
 
   def delete_object(self, datasetsid, file_name):
     """ Delete an object.

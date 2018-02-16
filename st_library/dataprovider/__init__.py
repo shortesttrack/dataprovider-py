@@ -78,14 +78,14 @@ class Library(Singleton):
         item = Item(datasetsid=datasetsid)
         return item.download_file(filename)
 
-    def upload_file(self, datasetsid, filename):
+    def upload_file(self, datasetsid, filename, filepath):
         """
         Download dataset files to disk.
         :return local file path:
         """
         from st_library.dataprovider.unstructured_data import Item
         item = Item(datasetsid=datasetsid)
-        return item.upload_file(filename)
+        return item.upload_file(filename, filepath)
 
     def delete_file(self, datasetsid, filename):
         """
