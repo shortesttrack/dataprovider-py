@@ -60,6 +60,15 @@ class Library(Singleton):
         tbl = Table(matricesid, datasetsid, tablename)
         return (tbl.to_dataframe())
 
+    def read_sec_matrix(self, matricesid, datasetsid, tablename):
+        """
+        Retrieves the table data.
+        :return dataframe:
+        """
+        from st_library.dataprovider.structured_data import Table
+        tbl = Table(matricesid, datasetsid, tablename, ifsec=1)
+        return (tbl.to_dataframe())
+
     def getParameter(self, scriptid):
         """
         Retrieves the table data.

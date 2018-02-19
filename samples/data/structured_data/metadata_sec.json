@@ -1,0 +1,6 @@
+{
+      "autodetect" : false,
+      "maxBadRecords" : 0,
+      "skipLeadingRows" : 1,
+      "sourceFormat" : "CSV"
+}

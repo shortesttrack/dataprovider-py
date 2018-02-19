@@ -82,7 +82,7 @@ class Api(object):
       multipart_data = MultipartEncoder(
         fields={
           # a file upload field
-          'file': ('RandomForest_train.zip',
+          'file': (file_name,
                    open(file_path+file_name,
                         'rb'), 'text/plain')
         }

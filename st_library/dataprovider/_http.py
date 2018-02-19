@@ -33,7 +33,7 @@ class RequestException(Exception):
         error = error['errors'][0]
       self.message += ': ' + error['message']
     except Exception:
-      lines = content.split('\n') if isinstance(content, basestring) else []
+      lines = content.split('\n')
       if lines:
         self.message += ': ' + lines[0]
 
@@ -96,7 +96,7 @@ class Http(object):
     # was no data to be POSTed, then default to GET request.
     if method is None:
       method = 'GET'
-
+    'https://shortesttrack.com/api/metadata/matrices/62a9058c_07e8_4c61_8da0_0f822952447e'
     if stats is not None:
       stats['duration'] = datetime.datetime.utcnow()
 
@@ -133,12 +133,10 @@ class Http(object):
       if 200 <= status_code < 300:
         if raw_response:
           return content
-        if type(content) == str:
-          return json.loads(content)
         if content.strip()=='':
           return content
-        else:
-          return json.loads(str(content, encoding='UTF-8'))
+        elif type(content) == str:
+          return json.loads(content)
       else:
         raise RequestException(status_code, content)
     except ValueError:
