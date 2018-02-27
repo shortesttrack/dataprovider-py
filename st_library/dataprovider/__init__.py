@@ -9,52 +9,46 @@
 # is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
-import os
 
+from st_library.dataprovider.metadata.metadata import Metadata
 from st_library.dataprovider.structured_data import Table
 from st_library.dataprovider.unstructured_data import Item
+from st_library.dataprovider.utils.generics.singleton import Singleton
+from st_library.dataprovider.utils.helpers.store import Store
 
 
-class Singleton(object):
-    _instances = {}
-
-    def __new__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            # noinspection PyArgumentList
-            cls._instances[cls] = super(Singleton, cls).__new__(cls, *args, **kwargs)
-        return cls._instances[cls]
+__all__ = ('Library',)
 
 
 class Library(Singleton):
     """
     The Singleton object, which retrieves and holds the Config ID of the Notebook.
     """
-    configuration_uuid = None
-    token = None
+
+    def __init__(self):
+        self.metadata = Metadata()
 
     def set_configuration_uuid(self, configuration_uuid):
-        self.configuration_uuid = configuration_uuid
+        Store.configuration_uuid = configuration_uuid
 
     def get_config_id(self):
         """
         Retrieves the Configuration UUID.
         :return:
         """
-        if self.configuration_uuid:
-            return self.configuration_uuid
+
+        return Store.configuration_uuid
 
     def set_token(self, token):
-        self.token = token
+        Store.token = token
 
     def get_token(self):
         """
         Retrieves the token.
         :return:
         """
-        if self.token:
-            return self.token
-        else:
-            return 'Bearer ' + os.environ['ST_API_TOKEN']
+
+        return Store.token
 
     def read_matrix(self, matricesid, datasetsid, tablename):
         """

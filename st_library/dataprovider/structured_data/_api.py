@@ -11,11 +11,11 @@
 # the License.
 
 """Implements BigQuery HTTP API wrapper."""
-import sys
+
+import time
 
 from st_library.dataprovider import _http
-import st_library.dataprovider as datapv
-import time
+from st_library.dataprovider.utils.helpers.store import Store
 
 
 class Api(object):
@@ -80,7 +80,7 @@ class Api(object):
           Exception if there is an error performing the operation.
         """
         if ifsec:
-            configurationid = datapv.Library().get_config_id()
+            configurationid = Store.configuration_uuid
             url = Api._DATA_ENDPOINT + (Api._DATA_SEC_GET_PATH % (configurationid, datasetsid, table_name))
         else:
             url = Api._DATA_ENDPOINT + (Api._DATA_GET_PATH % (datasetsid, table_name))
@@ -140,7 +140,7 @@ class Api(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        configurationid = datapv.Library().get_config_id()
+        configurationid = Store.configuration_uuid
         url = Api._DATA_ENDPOINT + (Api._DATA_SEC_INSERT_PATH % (configurationid, datasetsid, table_name))
         return _http.Http.request(url=url, data=json_data, method='POST')
 
@@ -154,7 +154,7 @@ class Api(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        configurationid = datapv.Library().get_config_id()
+        configurationid = Store.configuration_uuid
         url = Api._DATA_ENDPOINT + (Api._DATA_SEC_BATCH_INSERT_PATH % (configurationid, datasetsid, table_name))
 
         metadata_file = '/home/st/workspace/dataprovider-py/samples/data/structured_data/metadata_sec.json'

@@ -15,7 +15,8 @@ import datetime
 import json
 import logging
 import sys
-import st_library.dataprovider as datapv
+from st_library.dataprovider.utils.helpers.store import Store
+
 
 log = logging.getLogger(__name__)
 
@@ -73,7 +74,7 @@ class Http(object):
             headers = {}
 
         headers['user-agent'] = 'st-dataprovider/1.0'
-        headers['Authorization'] = datapv.Library().get_token()
+        headers['Authorization'] = Store.token
 
         # Setup method to POST if unspecified, and appropriate request headers
         # if there is data to be sent within the request.
