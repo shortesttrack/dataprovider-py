@@ -10,6 +10,7 @@
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
 
+
 class Singleton(object):
     _instances = {}
 
@@ -18,6 +19,7 @@ class Singleton(object):
             # noinspection PyArgumentList
             cls._instances[cls] = super(Singleton, cls).__new__(cls, *args, **kwargs)
         return cls._instances[cls]
+
 
 class Library(Singleton):
     """
@@ -49,7 +51,7 @@ class Library(Singleton):
             return self.token
         else:
             import os
-            return 'Bearer '+os.environ['ST_API_TOKEN']
+            return 'Bearer ' + os.environ['ST_API_TOKEN']
 
     def read_matrix(self, matricesid, datasetsid, tablename):
         """
