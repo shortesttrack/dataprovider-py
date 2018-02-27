@@ -9,6 +9,10 @@
 # is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
+import os
+
+from st_library.dataprovider.structured_data import Table
+from st_library.dataprovider.unstructured_data import Item
 
 
 class Singleton(object):
@@ -50,7 +54,6 @@ class Library(Singleton):
         if self.token:
             return self.token
         else:
-            import os
             return 'Bearer ' + os.environ['ST_API_TOKEN']
 
     def read_matrix(self, matricesid, datasetsid, tablename):
@@ -58,7 +61,6 @@ class Library(Singleton):
         Retrieves the table data.
         :return dataframe:
         """
-        from st_library.dataprovider.structured_data import Table
         tbl = Table(matricesid, datasetsid, tablename)
         return (tbl.to_dataframe())
 
@@ -67,16 +69,14 @@ class Library(Singleton):
         Retrieves the table data.
         :return dataframe:
         """
-        from st_library.dataprovider.structured_data import Table
         tbl = Table(matricesid, datasetsid, tablename, ifsec=1)
         return (tbl.to_dataframe())
 
-    def getParameter(self, scriptid):
+    def get_parameter(self, scriptid):
         """
         Retrieves the table data.
         :return dataframe:
         """
-        from st_library.dataprovider.structured_data import Table
         tbl = Table()
         return (tbl.get_parameter_data(scriptid))
 
@@ -85,7 +85,6 @@ class Library(Singleton):
         Download files to disk.
         :return local file path:
         """
-        from st_library.dataprovider.unstructured_data import Item
         item = Item(datasetsid=datasetsid)
         return item.download_file(filename)
 
@@ -94,7 +93,6 @@ class Library(Singleton):
         Download dataset files to disk.
         :return local file path:
         """
-        from st_library.dataprovider.unstructured_data import Item
         item = Item(datasetsid=datasetsid)
         return item.upload_file(filename, filepath)
 
@@ -103,6 +101,5 @@ class Library(Singleton):
         Download files to disk.
         :return local file path:
         """
-        from st_library.dataprovider.unstructured_data import Item
         item = Item(datasetsid=datasetsid)
         return item.delete_file(filename)
