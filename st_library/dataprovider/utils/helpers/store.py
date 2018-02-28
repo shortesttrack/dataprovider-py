@@ -8,3 +8,5 @@ class Store(object):
         token = 'Bearer ' + os.environ['ST_API_TOKEN']
     else:
         token = None
+
+    performance_id = os.environ.get('PERFORMANCE_ID')

@@ -14,9 +14,10 @@
 import datetime
 import json
 import logging
-import sys
-from st_library.dataprovider.utils.helpers.store import Store
 
+import requests
+
+from st_library.dataprovider.utils.helpers.store import Store
 
 log = logging.getLogger(__name__)
 
@@ -25,7 +26,7 @@ class RequestException(Exception):
     def __init__(self, status, content):
         self.status = status
         self.content = content
-        self.message = 'HTTP request failed'
+        self.message = 'HTTP request failed. Status code : {} '.format(status)
         # Try extract a message from the body; swallow possible resulting ValueErrors and KeyErrors.
         try:
             error = json.loads(content)['error']
@@ -33,9 +34,10 @@ class RequestException(Exception):
                 error = error['errors'][0]
             self.message += ': ' + error['message']
         except Exception:
-            lines = content.split('\n')
-            if lines:
-                self.message += ': ' + lines[0]
+            if content:
+                lines = content.split('\n')
+                if lines:
+                    self.message += ': ' + lines[0]
 
     def __str__(self):
         return self.message
@@ -96,39 +98,25 @@ class Http(object):
         # was no data to be POSTed, then default to GET request.
         if method is None:
             method = 'GET'
-        'https://shortesttrack.com/api/metadata/matrices/62a9058c_07e8_4c61_8da0_0f822952447e'
+
         if stats is not None:
             stats['duration'] = datetime.datetime.utcnow()
 
         response = None
+        status_code = None
+
         try:
             log.debug('request: method[%(method)s], url[%(url)s], body[%(data)s]' % locals())
-            status_code = None
-            if sys.version > '3':
-                import requests
-                if method == 'POST':
-                    response = requests.post(url=url, headers=headers, data=data)
-                    content = response.text
-                    status_code = response.status_code
-                elif method == 'GET':
-                    response = requests.get(url=url, headers=headers)
-                    content = response.text
-                    status_code = response.status_code
-            else:
-                import urllib2
-                request = urllib2.Request(url, data, headers)
-                try:
-                    content = urllib2.urlopen(request).read()
-                except urllib2.HTTPError as e:
-                    status_code = e.code
-                # ...
-                except urllib2.URLError as e:
-                    # Not an HTTP-specific error (e.g. connection refused)
-                    # ...
-                    status_code = e.code
-                else:
-                    # 200
-                    status_code = 200
+            content = None
+
+            if method == 'POST':
+                response = requests.post(url=url, headers=headers, data=data)
+                content = response.text
+                status_code = response.status_code
+            elif method == 'GET':
+                response = requests.get(url=url, headers=headers)
+                content = response.text
+                status_code = response.status_code
 
             if 200 <= status_code < 300:
                 if raw_response:

@@ -1,7 +1,7 @@
 import collections
 
 
-class BaseObject(collections.Mapping):
+class BaseModel(collections.Mapping):
     def get_initial_data(self):
         raise NotImplementedError
 

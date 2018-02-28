@@ -50,6 +50,9 @@ class Library(Singleton):
 
         return Store.token
 
+    def get_performance_id(self):
+        return Store.performance_id
+
     def read_matrix(self, matricesid, datasetsid, tablename):
         """
         Retrieves the table data.
