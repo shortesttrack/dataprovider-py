@@ -53,6 +53,7 @@ for accessing Shortest Track Platform services such as structured data storage.
     'poster==0.8.1',
     'requests-toolbelt==0.8.0',
     'pandas==0.19.1',
-    'urlobject==2.4.3'
+    'urlobject==2.4.3',
+    'six==1.11.0',
   ]
 )
