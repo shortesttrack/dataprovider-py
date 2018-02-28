@@ -14,5 +14,5 @@ import st_library.dataprovider as datapv
 st_lib = datapv.Library()
 st_lib.set_token('Bearer token')
 
-df = st_lib.getParameter("b11c26ec-893e-445c-a5e7-b74f99444e0c")
+df = st_lib.get_parameter("b11c26ec-893e-445c-a5e7-b74f99444e0c")
 print (df)
