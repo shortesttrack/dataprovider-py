@@ -1,7 +1,7 @@
 import six
 
 from st_library.utils.api_client import endpoints
-from st_library.utils.api_client._http import Http
+from st_library.utils.api_client.http import Http
 from st_library.utils.helpers.store import Store
 
 MODE_PRINT = 'mode_print'

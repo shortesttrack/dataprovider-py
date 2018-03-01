@@ -16,6 +16,7 @@ from st_library.core.metadata.metadata import Metadata
 from st_library.utils.generics.singleton import Singleton
 from st_library.utils.helpers.store import Store
 
+
 __all__ = ('Library',)
 
 
@@ -28,21 +29,20 @@ class Library(Singleton):
         self.metadata = Metadata()
         self.logger = Logger()
 
-    def set_configuration_uuid(self, configuration_uuid):
-        Store.configuration_uuid = configuration_uuid
-
-    def get_config_id(self):
+    @property
+    def config_id(self):
         """
         Retrieves the Configuration UUID.
         :return:
         """
 
-        return Store.configuration_uuid
+        return Store.config_id
 
-    def set_token(self, token):
-        Store.token = token
+    def set_config_id(self, config_id):
+        Store.config_id = config_id
 
-    def get_token(self):
+    @property
+    def token(self):
         """
         Retrieves the token.
         :return:
@@ -50,7 +50,15 @@ class Library(Singleton):
 
         return Store.token
 
-    def get_performance_id(self):
+    def set_token(self, token):
+        Store.token = token
+
+    @property
+    def performance_id(self):
+        """
+        Retrieves the performance.
+        :return:
+        """
         return Store.performance_id
 
     def read_matrix(self, matricesid, datasetsid, tablename):

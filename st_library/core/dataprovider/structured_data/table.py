@@ -13,9 +13,9 @@
 """Implements Table, and related Table BigQuery APIs."""
 import pandas
 
-from . import _api
-from . import _parser
-from . import _schema
+from st_library.core.dataprovider.structured_data import api
+from st_library.core.dataprovider.structured_data import parser
+from st_library.core.dataprovider.structured_data import schema
 
 
 # import of Query is at end of module as we have a circular dependency of
@@ -46,7 +46,7 @@ class Table(object):
           Exception if the name is invalid.
         """
         self._context = context
-        self._api = _api.Api()
+        self._api = api.Api()
         self._name_parts = name
         self._datasets_id = datasetsid
         self._matrices_id = matricesid
@@ -117,7 +117,7 @@ class Table(object):
 
             rows = []
             for row_dict in page_rows:
-                rows.append(_parser.Parser.parse_row(schema, row_dict))
+                rows.append(parser.Parser.parse_row(schema, row_dict))
 
             return rows, page_token
 
@@ -163,7 +163,7 @@ class Table(object):
         if not self._schema:
             try:
                 self._load_info()
-                self._schema = _schema.Schema(self._info['matrixScheme']['fieldSchemes'])
+                self._schema = schema.Schema(self._info['matrixScheme']['fieldSchemes'])
 
             except KeyError:
                 raise Exception('Unexpected table response: missing schema')

@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 from st_library.utils.api_client import endpoints
-from st_library.utils.api_client._http import Http
+from st_library.utils.api_client.http import Http
 from st_library.utils.api_client.models import ScriptExecutionConfiguration
 from st_library.utils.helpers.store import Store
 
@@ -11,7 +11,7 @@ class Metadata(object):
         self._script_execution_configurations = defaultdict(ScriptExecutionConfiguration)
 
     def get_parameter_value(self, parameter_id):
-        return self._script_execution_configurations[Store.configuration_uuid].get_parameter_value(parameter_id)
+        return self._script_execution_configurations[Store.config_id].get_parameter_value(parameter_id)
 
     def set_performance_output_parameter_value(self, parameter_id, parameter_value):
         if not Store.performance_id:

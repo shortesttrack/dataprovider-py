@@ -15,7 +15,7 @@
 import time
 
 from st_library.utils.helpers.store import Store
-from st_library.utils.api_client import _http
+from st_library.utils.api_client import http
 
 
 class Api(object):
@@ -51,7 +51,7 @@ class Api(object):
           Exception if there is an error performing the operation.
         """
         url = Api._METADATA_ENDPOINT + (Api._METADATA_MATRICES_PATH % matrices_id)
-        return _http.Http.request(url)
+        return http.Http.request(url)
 
     def tables_get_parameter(self, script_id):
         """Issues a request to retrieve the parameter of the script execution configuration.
@@ -64,7 +64,7 @@ class Api(object):
           Exception if there is an error performing the operation.
         """
         url = Api._METADATA_ENDPOINT + (Api._PARAMETER_GET_PATH % script_id)
-        return _http.Http.request(url)
+        return http.Http.request(url)
 
     def tabledata_list(self, ifsec, datasetsid, table_name, start_index=None, max_results=None, page_token=None):
         """ Retrieves the contents of a table.
@@ -80,7 +80,7 @@ class Api(object):
           Exception if there is an error performing the operation.
         """
         if ifsec:
-            configurationid = Store.configuration_uuid
+            configurationid = Store.config_id
             url = Api._DATA_ENDPOINT + (Api._DATA_SEC_GET_PATH % (configurationid, datasetsid, table_name))
         else:
             url = Api._DATA_ENDPOINT + (Api._DATA_GET_PATH % (datasetsid, table_name))
@@ -91,7 +91,7 @@ class Api(object):
             args['maxResults'] = max_results
         if page_token is not None:
             args['pageToken'] = page_token
-        return _http.Http.request(url, args=args)
+        return http.Http.request(url, args=args)
 
     def tabledata_post(self, datasetsid, table_name, file_name):
         """ Insert the contents of a table.
@@ -128,7 +128,7 @@ class Api(object):
         headers = {}
         headers['Content-Type'] = 'multipart/form-data; boundary=%s' % boundary
 
-        return _http.Http.request(url=url, data=http_body, headers=headers, method='POST')
+        return http.Http.request(url=url, data=http_body, headers=headers, method='POST')
 
     def insert_sec_data(self, datasetsid, table_name, json_data):
         """ Insert streams data into matrix.
@@ -140,9 +140,9 @@ class Api(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        configurationid = Store.configuration_uuid
+        configurationid = Store.config_id
         url = Api._DATA_ENDPOINT + (Api._DATA_SEC_INSERT_PATH % (configurationid, datasetsid, table_name))
-        return _http.Http.request(url=url, data=json_data, method='POST')
+        return http.Http.request(url=url, data=json_data, method='POST')
 
     def insert_batch_sec_data(self, datasetsid, table_name, file_path, file_name):
         """ Insert streams data into matrix.
@@ -154,7 +154,7 @@ class Api(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        configurationid = Store.configuration_uuid
+        configurationid = Store.config_id
         url = Api._DATA_ENDPOINT + (Api._DATA_SEC_BATCH_INSERT_PATH % (configurationid, datasetsid, table_name))
 
         metadata_file = '/home/st/workspace/dataprovider-py/samples/data/structured_data/metadata_sec.json'
@@ -180,7 +180,7 @@ class Api(object):
         headers = {}
         headers['Content-Type'] = 'multipart/form-data; boundary=%s' % boundary
 
-        return _http.Http.request(url=url, data=http_body, headers=headers, method='POST')
+        return http.Http.request(url=url, data=http_body, headers=headers, method='POST')
 
         # if sys.version > '3':
         #   from requests_toolbelt.multipart.encoder import MultipartEncoder

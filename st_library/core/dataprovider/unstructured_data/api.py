@@ -14,7 +14,7 @@
 
 import sys
 
-from st_library.utils.api_client import _http
+from st_library.utils.api_client import http
 
 
 class Api(object):
@@ -44,7 +44,7 @@ class Api(object):
           Exception if there is an error performing the operation.
         """
         url = Api._METADATA_ENDPOINT + (Api._METADATA_MATRICES_PATH % matrices_id)
-        return _http.Http.request(url)
+        return http.Http.request(url)
 
     def download_object(self, datasetsid, file_name):
         """ Download an object.
@@ -58,8 +58,8 @@ class Api(object):
           Exception if there is an error performing the operation.
         """
         url = Api._DATA_ENDPOINT + (Api._FILE_DOWNLOAD_PATH % (datasetsid, file_name))
-        download_url = _http.Http.request(url, raw_response=True)
-        return _http.Http.request(download_url, raw_response=True)
+        download_url = http.Http.request(url, raw_response=True)
+        return http.Http.request(download_url, raw_response=True)
 
     def upload_object(self, datasetsid, file_name, file_path):
         """ Upload file to gcs.
@@ -88,7 +88,7 @@ class Api(object):
             headers = {}
             headers['Content-Type'] = multipart_data.content_type
 
-            return _http.Http.request(url=url, data=multipart_data, headers=headers, method='POST')
+            return http.Http.request(url=url, data=multipart_data, headers=headers, method='POST')
         else:
             from poster.encode import multipart_encode
             from poster.streaminghttp import register_openers
@@ -103,7 +103,7 @@ class Api(object):
             # datagen is a generator object that yields the encoded parameters
             datagen, headers = multipart_encode(
                 {"file": open(file_path + file_name)})
-            return _http.Http.request(url=url, data=datagen, headers=headers, method='POST')
+            return http.Http.request(url=url, data=datagen, headers=headers, method='POST')
 
     def delete_object(self, datasetsid, file_name):
         """ Delete an object.
@@ -117,4 +117,4 @@ class Api(object):
           Exception if there is an error performing the operation.
         """
         url = Api._DATA_ENDPOINT + (Api._FILE_DELETE_PATH % (datasetsid, file_name))
-        return _http.Http.request(url=url, method='DELETE')
+        return http.Http.request(url=url, method='DELETE')
