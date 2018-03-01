@@ -17,7 +17,7 @@ import logging
 
 import requests
 
-from st_library.dataprovider.utils.helpers.store import Store
+from st_library.utils.helpers.store import Store
 
 log = logging.getLogger(__name__)
 

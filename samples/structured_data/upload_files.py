@@ -1,7 +1,7 @@
-import st_library.dataprovider as datapv
-import st_library.dataprovider.structured_data as stdata
+import st_library.core.dataprovider.structured_data as stdata
+from st_library import Library
 
-st_lib = datapv.Library()
+st_lib = Library()
 st_lib.set_token('Bearer token')
 st_lib.set_configuration_uuid('52db99d3-edfb-44c5-b97a-f09df4402081')
 

@@ -1,8 +1,8 @@
 import six
 
-from st_library.dataprovider._http import Http
-from st_library.dataprovider.utils.endpoints import paths
-from st_library.dataprovider.utils.helpers.store import Store
+from st_library.utils.api_client import endpoints
+from st_library.utils.api_client._http import Http
+from st_library.utils.helpers.store import Store
 
 MODE_PRINT = 'mode_print'
 MODE_SEND = 'mode_send'
@@ -31,7 +31,7 @@ class Logger(object):
                 'analysis': analysis,
                 'data': message
             }
-            Http.request(paths.logging_post_path(Store.performance_id), data=payload, method='POST')
+            Http.request(endpoints.logging_post_path(Store.performance_id), data=payload, method='POST')
         else:
             six.print_(self._format_message(message, level))
 

@@ -1,9 +1,9 @@
 from collections import defaultdict
 
-from st_library.dataprovider._http import Http
-from st_library.dataprovider.models.script_execution_configuration import ScriptExecutionConfiguration
-from st_library.dataprovider.utils.endpoints import paths
-from st_library.dataprovider.utils.helpers.store import Store
+from st_library.utils.api_client import endpoints
+from st_library.utils.api_client._http import Http
+from st_library.utils.api_client.models import ScriptExecutionConfiguration
+from st_library.utils.helpers.store import Store
 
 
 class Metadata(object):
@@ -18,5 +18,5 @@ class Metadata(object):
             raise ValueError('performance_id is not specified in this environment')
 
         performance_id = Store.performance_id
-        Http.request(paths.performance_output_parameter_post_path(parameter_id, performance_id),
+        Http.request(endpoints.performance_output_parameter_post_path(parameter_id, performance_id),
                      data={'value': parameter_value}, method='POST')

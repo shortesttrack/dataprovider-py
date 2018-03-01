@@ -14,8 +14,8 @@
 
 import time
 
-from st_library.dataprovider import _http
-from st_library.dataprovider.utils.helpers.store import Store
+from st_library.utils.helpers.store import Store
+from st_library.utils.api_client import _http
 
 
 class Api(object):

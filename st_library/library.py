@@ -9,13 +9,12 @@
 # is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
-from st_library.dataprovider.logger.logger import Logger
-from st_library.dataprovider.metadata.metadata import Metadata
-from st_library.dataprovider.structured_data import Table
-from st_library.dataprovider.unstructured_data import Item
-from st_library.dataprovider.utils.generics.singleton import Singleton
-from st_library.dataprovider.utils.helpers.store import Store
-
+from st_library.core.dataprovider import Item
+from st_library.core.dataprovider import Table
+from st_library.core.logger.logger import Logger
+from st_library.core.metadata.metadata import Metadata
+from st_library.utils.generics.singleton import Singleton
+from st_library.utils.helpers.store import Store
 
 __all__ = ('Library',)
 
