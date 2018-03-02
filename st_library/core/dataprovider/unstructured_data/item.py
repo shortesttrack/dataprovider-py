@@ -11,7 +11,7 @@
 # the License.
 
 """Implements Table, and related Table BigQuery APIs."""
-from st_library.core.dataprovider.unstructured_data import unstructured_data
+from st_library.utils.api_client.services.unstructured_data import UnstructuredDataService
 
 
 # import of Query is at end of module as we have a circular dependency of
@@ -42,7 +42,7 @@ class Item(object):
           Exception if the name is invalid.
         """
 
-        self._api = unstructured_data.UnstructuredData()
+        self._service = UnstructuredDataService()
         self._datasets_id = datasetsid
         self._cached_page = None
         self._cached_page_index = 0
@@ -54,7 +54,7 @@ class Item(object):
         Args:
           filename: the name of the dataset files.
         """
-        raw_data =  self._api.download_object(self._datasets_id, filename)
+        raw_data = self._service.download_object(self._datasets_id, filename)
 
         with open(filename, 'wb') as f:
             f.write(raw_data)
@@ -67,7 +67,7 @@ class Item(object):
         Args:
           filename: the name of the file.
         """
-        return self._api.upload_object(self._datasets_id, filename, filepath)
+        return self._service.upload_object(self._datasets_id, filename, filepath)
 
     def delete_file(self, filename=None):
         """ Delete files from gcs.
@@ -75,4 +75,4 @@ class Item(object):
         Args:
           filename: the name of the file.
         """
-        return self._api.delete_object(self._datasets_id, filename)
+        return self._service.delete_object(self._datasets_id, filename)

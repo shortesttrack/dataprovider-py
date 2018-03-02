@@ -13,9 +13,9 @@
 """Implements Table, and related Table BigQuery APIs."""
 import pandas
 
-from st_library.core.dataprovider.structured_data import structured_data
 from st_library.core.dataprovider.structured_data import parser
 from st_library.core.dataprovider.structured_data import schema
+from st_library.utils.api_client.services.structured_data import StructuredDataService
 
 
 # import of Query is at end of module as we have a circular dependency of
@@ -46,7 +46,7 @@ class Table(object):
           Exception if the name is invalid.
         """
         self._context = context
-        self._api = structured_data.StructuredData()
+        self._service = StructuredDataService()
         self._name_parts = name
         self._datasets_id = datasetsid
         self._matrices_id = matricesid
@@ -60,7 +60,7 @@ class Table(object):
         """Loads metadata about this table."""
         if self._info is None:
             try:
-                self._info = self._api.tables_get(self._matrices_id)
+                self._info = self._service.tables_get(self._matrices_id)
             except Exception as e:
                 raise e
 
@@ -104,13 +104,13 @@ class Table(object):
 
                 try:
                     if page_token:
-                        response = self._api.tabledata_list(self._config_related, self._datasets_id,
-                                                            name_parts, page_token=page_token,
-                                                            max_results=max_results)
+                        response = self._service.tabledata_list(self._config_related, self._datasets_id,
+                                                                name_parts, page_token=page_token,
+                                                                max_results=max_results)
                     else:
-                        response = self._api.tabledata_list(self._config_related, self._datasets_id,
-                                                            name_parts, start_index=start_row,
-                                                            max_results=max_results)
+                        response = self._service.tabledata_list(self._config_related, self._datasets_id,
+                                                                name_parts, start_index=start_row,
+                                                                max_results=max_results)
                 except Exception as e:
                     raise e
                 page_token = response['pageToken'] if 'pageToken' in response else None
@@ -177,7 +177,7 @@ class Table(object):
         Args:
           filename: the name of the csv file.
         """
-        response = self._api.tabledata_post(self._datasets_id, self._name_parts, filename)
+        response = self._service.tabledata_post(self._datasets_id, self._name_parts, filename)
 
     def insert_data(self, json_data=None):
         """ Insert streams data into matrix.
@@ -185,7 +185,7 @@ class Table(object):
         Args:
           json_data:  the records of the matrix.
         """
-        response = self._api.insert_data(self._datasets_id, self._name_parts, json_data)
+        response = self._service.insert_data(self._datasets_id, self._name_parts, json_data)
 
     def insert_sec_data(self, json_data=None):
         """ Insert streams data into matrix.
@@ -193,7 +193,7 @@ class Table(object):
         Args:
           json_data:  the records of the matrix.
         """
-        response = self._api.insert_sec_data(self._datasets_id, self._name_parts, json_data)
+        response = self._service.insert_sec_data(self._datasets_id, self._name_parts, json_data)
 
     def insert_batch_sec_data(self, file_path=None, file_name=None):
         """ Insert streams data into matrix.
@@ -201,7 +201,7 @@ class Table(object):
         Args:
           json_data:  the records of the matrix.
         """
-        response = self._api.insert_batch_sec_data(self._datasets_id, self._name_parts, file_path, file_name)
+        response = self._service.insert_batch_sec_data(self._datasets_id, self._name_parts, file_path, file_name)
 
     def get_parameter_data(self):
         """ Insert streams data into matrix.
@@ -209,5 +209,5 @@ class Table(object):
         Args:
           json_data:  the records of the matrix.
         """
-        script_dict = self._api.tables_get_parameter()
+        script_dict = self._service.tables_get_parameter()
         return script_dict['parameters']

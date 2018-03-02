@@ -16,5 +16,6 @@ st_lib = Library()
 st_lib.set_token('Bearer token')
 st_lib.set_config_id('52db99d3-edfb-44c5-b97a-f09df4402081')
 
-df = st_lib.read_matrix("716f0214-3b74-4937-8454-9e226643d35f", "066375bc-21dc-4d8a-90e1-92d967b40411", "MatrixA")
+df = st_lib.struct_data.read_matrix("716f0214-3b74-4937-8454-9e226643d35f", "066375bc-21dc-4d8a-90e1-92d967b40411",
+                                    "MatrixA")
 print (df)
