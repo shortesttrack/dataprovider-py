@@ -11,7 +11,7 @@
 # the License.
 
 """Implements Table, and related Table BigQuery APIs."""
-from st_library.core.dataprovider.unstructured_data import api
+from st_library.core.dataprovider.unstructured_data import unstructured_data
 
 
 # import of Query is at end of module as we have a circular dependency of
@@ -42,7 +42,7 @@ class Item(object):
           Exception if the name is invalid.
         """
 
-        self._api = api.Api()
+        self._api = unstructured_data.UnstructuredData()
         self._datasets_id = datasetsid
         self._cached_page = None
         self._cached_page_index = 0

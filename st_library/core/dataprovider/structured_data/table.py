@@ -13,7 +13,7 @@
 """Implements Table, and related Table BigQuery APIs."""
 import pandas
 
-from st_library.core.dataprovider.structured_data import api
+from st_library.core.dataprovider.structured_data import structured_data
 from st_library.core.dataprovider.structured_data import parser
 from st_library.core.dataprovider.structured_data import schema
 
@@ -33,7 +33,7 @@ class Table(object):
     # Milliseconds per week
     _MSEC_PER_WEEK = 7 * 24 * 3600 * 1000
 
-    def __init__(self, matricesid=None, datasetsid=None, name=None, context=None, ifsec=0):
+    def __init__(self, matricesid=None, datasetsid=None, name=None, context=None, config_related=False):
         """Initializes an instance of a Table object. The Table need not exist yet.
 
         Args:
@@ -46,7 +46,7 @@ class Table(object):
           Exception if the name is invalid.
         """
         self._context = context
-        self._api = api.Api()
+        self._api = structured_data.StructuredData()
         self._name_parts = name
         self._datasets_id = datasetsid
         self._matrices_id = matricesid
@@ -54,7 +54,7 @@ class Table(object):
         self._cached_page = None
         self._cached_page_index = 0
         self._schema = None
-        self._ifsec = ifsec
+        self._config_related = config_related
 
     def _load_info(self):
         """Loads metadata about this table."""
@@ -104,10 +104,12 @@ class Table(object):
 
                 try:
                     if page_token:
-                        response = self._api.tabledata_list(self._ifsec, self._datasets_id, name_parts, page_token=page_token,
+                        response = self._api.tabledata_list(self._config_related, self._datasets_id,
+                                                            name_parts, page_token=page_token,
                                                             max_results=max_results)
                     else:
-                        response = self._api.tabledata_list(self._ifsec, self._datasets_id, name_parts, start_index=start_row,
+                        response = self._api.tabledata_list(self._config_related, self._datasets_id,
+                                                            name_parts, start_index=start_row,
                                                             max_results=max_results)
                 except Exception as e:
                     raise e
@@ -201,11 +203,11 @@ class Table(object):
         """
         response = self._api.insert_batch_sec_data(self._datasets_id, self._name_parts, file_path, file_name)
 
-    def get_parameter_data(self, scriptid):
+    def get_parameter_data(self):
         """ Insert streams data into matrix.
 
         Args:
           json_data:  the records of the matrix.
         """
-        script_dict = self._api.tables_get_parameter(scriptid)
+        script_dict = self._api.tables_get_parameter()
         return script_dict['parameters']

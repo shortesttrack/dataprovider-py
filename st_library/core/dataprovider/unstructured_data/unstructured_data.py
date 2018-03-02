@@ -14,19 +14,11 @@
 
 import sys
 
-from st_library.utils.api_client import http
+from st_library.utils.api_client import http, endpoints
 
 
-class Api(object):
+class UnstructuredData(object):
     """A helper class to issue BigQuery HTTP requests."""
-    # _ENDPOINT = 'https://shortesttrack.com'
-    _METADATA_ENDPOINT = 'https://shortesttrack.com'
-    _DATA_ENDPOINT = 'https://shortesttrack.com'
-    _FILE_DOWNLOAD_PATH = '/api/data/blob-repositories/%s/download?name=%s'
-    _FILE_DELETE_PATH = '/api/data/blob-repositories/%s?name=%s'
-    _FILE_UPLOAD_PATH = '/api/data/blob-repositories/%s?name=%s'
-
-    _DEFAULT_TIMEOUT = 60000
 
     def __init__(self):
         """Initializes the BigQuery helper with context information.
@@ -43,7 +35,7 @@ class Api(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        url = Api._METADATA_ENDPOINT + (Api._METADATA_MATRICES_PATH % matrices_id)
+        url = endpoints.object_path(table_name, matrices_id)
         return http.Http.request(url)
 
     def download_object(self, datasetsid, file_name):
@@ -57,7 +49,7 @@ class Api(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        url = Api._DATA_ENDPOINT + (Api._FILE_DOWNLOAD_PATH % (datasetsid, file_name))
+        url = endpoints.object_download_path(datasetsid, file_name)
         download_url = http.Http.request(url, raw_response=True)
         return http.Http.request(download_url, raw_response=True)
 
@@ -72,7 +64,8 @@ class Api(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        url = Api._DATA_ENDPOINT + (Api._FILE_UPLOAD_PATH % (datasetsid, file_name))
+
+        url = endpoints.object_path(datasetsid, file_name)
 
         if sys.version > '3':
             from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -116,5 +109,5 @@ class Api(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        url = Api._DATA_ENDPOINT + (Api._FILE_DELETE_PATH % (datasetsid, file_name))
+        url = endpoints.object_path(datasetsid, file_name)
         return http.Http.request(url=url, method='DELETE')

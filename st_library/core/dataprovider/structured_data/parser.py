@@ -16,77 +16,78 @@ import datetime
 
 
 class Parser(object):
-  """A set of helper functions to parse data in BigQuery responses."""
+    """A set of helper functions to parse data in BigQuery responses."""
 
-  def __init__(self):
-    pass
+    def __init__(self):
+        pass
 
-  @staticmethod
-  def parse_row(schema, data):
-    """Parses a row from query results into an equivalent object.
+    @staticmethod
+    def parse_row(schema, data):
+        """Parses a row from query results into an equivalent object.
 
-    Args:
-      schema: the array of fields defining the schema of the data.
-      data: the JSON row from a query result.
-    Returns:
-      The parsed row object.
-    """
-    def parse_value(data_type, value):
-      """Parses a value returned from a BigQuery response.
+        Args:
+          schema: the array of fields defining the schema of the data.
+          data: the JSON row from a query result.
+        Returns:
+          The parsed row object.
+        """
 
-      Args:
-        data_type: the type of the value as specified by the schema.
-        value: the raw value to return (before casting to data_type).
+        def parse_value(data_type, value):
+            """Parses a value returned from a BigQuery response.
 
-      Returns:
-        The value cast to the data_type.
-      """
-      if value is not None:
-        if value == 'null':
-          value = None
-        elif data_type == 'INTEGER':
-          value = int(value)
-        elif data_type == 'FLOAT':
-          value = float(value)
-        elif data_type == 'TIMESTAMP':
-          value = datetime.datetime.utcfromtimestamp(float(value))
-        elif data_type == 'BOOLEAN':
-          value = value == 'true'
-        elif (type(value) != str):
-          # TODO(gram): Handle nested JSON records
-          value = str(value)
-      return value
+            Args:
+              data_type: the type of the value as specified by the schema.
+              value: the raw value to return (before casting to data_type).
 
-    row = {}
-    if data is None:
-      return row
+            Returns:
+              The value cast to the data_type.
+            """
+            if value is not None:
+                if value == 'null':
+                    value = None
+                elif data_type == 'INTEGER':
+                    value = int(value)
+                elif data_type == 'FLOAT':
+                    value = float(value)
+                elif data_type == 'TIMESTAMP':
+                    value = datetime.datetime.utcfromtimestamp(float(value))
+                elif data_type == 'BOOLEAN':
+                    value = value == 'true'
+                elif (type(value) != str):
+                    # TODO(gram): Handle nested JSON records
+                    value = str(value)
+            return value
 
-    for i, (field, schema_field) in enumerate(zip(data['f'], schema)):
-      val = field['v']
-      name = schema_field['name']
-      data_type = schema_field['type']
-      repeated = True if 'mode' in schema_field and schema_field['mode'] == 'REPEATED' else False
+        row = {}
+        if data is None:
+            return row
 
-      if repeated and val is None:
-        row[name] = []
-      elif data_type == 'RECORD':
-        sub_schema = schema_field['fields']
-        if repeated:
-          row[name] = [Parser.parse_row(sub_schema, v['v']) for v in val]
-        else:
-          row[name] = Parser.parse_row(sub_schema, val)
-      elif repeated:
-        row[name] = [parse_value(data_type, v['v']) for v in val]
-      else:
-        row[name] = parse_value(data_type, val)
+        for i, (field, schema_field) in enumerate(zip(data['f'], schema)):
+            val = field['v']
+            name = schema_field['name']
+            data_type = schema_field['type']
+            repeated = True if 'mode' in schema_field and schema_field['mode'] == 'REPEATED' else False
 
-    return row
+            if repeated and val is None:
+                row[name] = []
+            elif data_type == 'RECORD':
+                sub_schema = schema_field['fields']
+                if repeated:
+                    row[name] = [Parser.parse_row(sub_schema, v['v']) for v in val]
+                else:
+                    row[name] = Parser.parse_row(sub_schema, val)
+            elif repeated:
+                row[name] = [parse_value(data_type, v['v']) for v in val]
+            else:
+                row[name] = parse_value(data_type, val)
 
-  @staticmethod
-  def parse_timestamp(value):
-    """Parses a timestamp.
+        return row
 
-    Args:
-      value: the number of milliseconds since epoch.
-    """
-    return datetime.datetime.utcfromtimestamp(float(value) / 1000.0)
+    @staticmethod
+    def parse_timestamp(value):
+        """Parses a timestamp.
+
+        Args:
+          value: the number of milliseconds since epoch.
+        """
+        return datetime.datetime.utcfromtimestamp(float(value) / 1000.0)

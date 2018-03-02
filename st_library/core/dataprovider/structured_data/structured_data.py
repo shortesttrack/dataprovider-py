@@ -15,30 +15,11 @@
 import time
 
 from st_library.utils.helpers.store import Store
-from st_library.utils.api_client import http
+from st_library.utils.api_client import http, endpoints
 
 
-class Api(object):
+class StructuredData(object):
     """A helper class to issue BigQuery HTTP requests."""
-
-    # _ENDPOINT = 'https://shortesttrack.com'
-    _METADATA_ENDPOINT = 'https://shortesttrack.com'
-    _DATA_ENDPOINT = 'https://shortesttrack.com'
-    _METADATA_MATRICES_PATH = '/api/metadata/matrices/%s'
-    _DATA_GET_PATH = '/api/data/datasets/%s/matrices/%s/data'
-    _DATA_SEC_GET_PATH = '/api/data/script-execution-configurations/%s/datasets/%s/matrices/%s/data'
-    _PARAMETER_GET_PATH = '/api/metadata/script-execution-configurations/%s'
-    _DATA_UPLOAD_PATH = '/api/data/datasets/%s/matrices/%s/upload'
-    _DATA_INSERT_PATH = '/api/data/datasets/%s/matrices/%s/insert'
-    _DATA_SEC_INSERT_PATH = '/api/data/script-execution-configurations/%s/datasets/%s/matrices/%s/insert'
-    _DATA_SEC_BATCH_INSERT_PATH = '/api/data/script-execution-configurations/%s/datasets/%s/matrices/%s/upload'
-
-    _DEFAULT_TIMEOUT = 60000
-
-    def __init__(self):
-        """Initializes the BigQuery helper with context information.
-
-        """
 
     def tables_get(self, matrices_id):
         """Issues a request to retrieve information about a table.
@@ -50,23 +31,20 @@ class Api(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        url = Api._METADATA_ENDPOINT + (Api._METADATA_MATRICES_PATH % matrices_id)
-        return http.Http.request(url)
+        return http.Http.request(endpoints.matrices_path(matrices_id))
 
-    def tables_get_parameter(self, script_id):
+    def tables_get_parameter(self):
         """Issues a request to retrieve the parameter of the script execution configuration.
 
         Args:
-          script_id:
         Returns:
           A parsed result object.
         Raises:
           Exception if there is an error performing the operation.
         """
-        url = Api._METADATA_ENDPOINT + (Api._PARAMETER_GET_PATH % script_id)
-        return http.Http.request(url)
+        return http.Http.request(endpoints.sec_get_detail_path(Store.config_id))
 
-    def tabledata_list(self, ifsec, datasetsid, table_name, start_index=None, max_results=None, page_token=None):
+    def tabledata_list(self, config_related, datasetsid, table_name, start_index=None, max_results=None, page_token=None):
         """ Retrieves the contents of a table.
 
         Args:
@@ -79,11 +57,10 @@ class Api(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        if ifsec:
-            configurationid = Store.config_id
-            url = Api._DATA_ENDPOINT + (Api._DATA_SEC_GET_PATH % (configurationid, datasetsid, table_name))
+        if config_related:
+            url = endpoints.sec_matrices_get_path(Store.config_id, datasetsid, table_name)
         else:
-            url = Api._DATA_ENDPOINT + (Api._DATA_GET_PATH % (datasetsid, table_name))
+            url = endpoints.matrices_get_path(datasetsid, table_name)
         args = {}
         if start_index:
             args['startIndex'] = start_index
@@ -103,7 +80,8 @@ class Api(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        url = Api._DATA_ENDPOINT + (Api._DATA_UPLOAD_PATH % (datasetsid, table_name))
+
+        url = endpoints.matrices_upload_path(datasetsid, table_name)
 
         filepath1 = r"/home/st/workspace/st-dataprovider-python/datalab/structured_data/metadata.json"
         filepath2 = file_name
@@ -140,8 +118,7 @@ class Api(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        configurationid = Store.config_id
-        url = Api._DATA_ENDPOINT + (Api._DATA_SEC_INSERT_PATH % (configurationid, datasetsid, table_name))
+        url = endpoints.sec_matrices_insert_path(Store.config_id, datasetsid, table_name)
         return http.Http.request(url=url, data=json_data, method='POST')
 
     def insert_batch_sec_data(self, datasetsid, table_name, file_path, file_name):
@@ -154,8 +131,7 @@ class Api(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        configurationid = Store.config_id
-        url = Api._DATA_ENDPOINT + (Api._DATA_SEC_BATCH_INSERT_PATH % (configurationid, datasetsid, table_name))
+        url = endpoints.sec_matrices_batch_insert_path(Store.config_id, datasetsid, table_name)
 
         metadata_file = '/home/st/workspace/dataprovider-py/samples/data/structured_data/metadata_sec.json'
         data_file = file_path + file_name

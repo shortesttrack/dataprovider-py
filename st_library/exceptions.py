@@ -1,0 +1,6 @@
+
+
+class STLibraryException(Exception):
+    pass
+
+
