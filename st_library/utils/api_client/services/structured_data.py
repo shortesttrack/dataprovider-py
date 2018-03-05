@@ -15,7 +15,7 @@
 import time
 
 from st_library.utils.helpers.store import Store
-from st_library.utils.api_client import http, endpoints
+from st_library.utils.api_client import ApiClient
 
 
 class StructuredDataService(object):
@@ -31,7 +31,7 @@ class StructuredDataService(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        return http.Http.request(endpoints.matrices_path(matrices_id))
+        return ApiClient.get(ApiClient.res.matrices(matrices_id))
 
     def tables_get_parameter(self):
         """Issues a request to retrieve the parameter of the script execution configuration.
@@ -42,7 +42,7 @@ class StructuredDataService(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        return http.Http.request(endpoints.sec_get_detail_path(Store.config_id))
+        return ApiClient.get(ApiClient.res.sec_get_detail(Store.config_id))
 
     def tabledata_list(self, config_related, datasetsid, table_name, start_index=None, max_results=None, page_token=None):
         """ Retrieves the contents of a table.
@@ -58,17 +58,18 @@ class StructuredDataService(object):
           Exception if there is an error performing the operation.
         """
         if config_related:
-            url = endpoints.sec_matrices_get_path(Store.config_id, datasetsid, table_name)
+            url = ApiClient.res.sec_matrices_get(Store.config_id, datasetsid, table_name)
         else:
-            url = endpoints.matrices_get_path(datasetsid, table_name)
-        args = {}
+            url = ApiClient.res.matrices_get(datasetsid, table_name)
+        params = {}
         if start_index:
-            args['startIndex'] = start_index
+            params['startIndex'] = start_index
         if max_results:
-            args['maxResults'] = max_results
+            params['maxResults'] = max_results
         if page_token is not None:
-            args['pageToken'] = page_token
-        return http.Http.request(url, args=args)
+            params['pageToken'] = page_token
+
+        return ApiClient.get(url, params=params)
 
     def tabledata_post(self, datasetsid, table_name, file_name):
         """ Insert the contents of a table.
@@ -80,8 +81,6 @@ class StructuredDataService(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-
-        url = endpoints.matrices_upload_path(datasetsid, table_name)
 
         filepath1 = r"/home/st/workspace/st-dataprovider-python/datalab/structured_data/metadata.json"
         filepath2 = file_name
@@ -106,7 +105,9 @@ class StructuredDataService(object):
         headers = {}
         headers['Content-Type'] = 'multipart/form-data; boundary=%s' % boundary
 
-        return http.Http.request(url=url, data=http_body, headers=headers, method='POST')
+        return ApiClient.post(
+            ApiClient.res.matrices_upload(datasetsid, table_name), data=http_body, extra_headers=headers
+        )
 
     def insert_sec_data(self, datasetsid, table_name, json_data):
         """ Insert streams data into matrix.
@@ -118,8 +119,10 @@ class StructuredDataService(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        url = endpoints.sec_matrices_insert_path(Store.config_id, datasetsid, table_name)
-        return http.Http.request(url=url, data=json_data, method='POST')
+
+        return ApiClient.post(ApiClient.res.sec_matrices_insert(
+            Store.config_id, datasetsid, table_name), data=json_data
+        )
 
     def insert_batch_sec_data(self, datasetsid, table_name, file_path, file_name):
         """ Insert streams data into matrix.
@@ -131,7 +134,6 @@ class StructuredDataService(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        url = endpoints.sec_matrices_batch_insert_path(Store.config_id, datasetsid, table_name)
 
         metadata_file = '/home/st/workspace/dataprovider-py/samples/data/structured_data/metadata_sec.json'
         data_file = file_path + file_name
@@ -156,39 +158,6 @@ class StructuredDataService(object):
         headers = {}
         headers['Content-Type'] = 'multipart/form-data; boundary=%s' % boundary
 
-        return http.Http.request(url=url, data=http_body, headers=headers, method='POST')
-
-        # if sys.version > '3':
-        #   from requests_toolbelt.multipart.encoder import MultipartEncoder
-        #
-        #   multipart_data = MultipartEncoder(
-        #     fields={
-        #       'metadata':('metadata_sec.json',
-        #                open('/home/st/workspace/dataprovider-py/samples/data/structured_data/metadata_sec.json',
-        #                     'rb'), 'text/plain'),
-        #       # a file upload field
-        #       'data': (file_name,
-        #                open(file_path+file_name,
-        #                     'rb'), 'text/plain')
-        #     }
-        #   )
-        #   headers = {}
-        #   headers['Content-Type'] = multipart_data.content_type
-        #
-        #   return _http.Http.request(url=url, data=multipart_data, headers=headers, method='POST')
-        # else:
-        #   from poster.encode import multipart_encode
-        #   from poster.streaminghttp import register_openers
-        #
-        #   # Register the streaming http handlers with urllib2
-        #   register_openers()
-        #
-        #   # Start the multipart/form-data encoding of the file
-        #   # "file" is the name of the parameter, which is normally set
-        #   # via the "name" parameter of the HTML <input> tag.
-        #   # headers contains the necessary Content-Type and Content-Length
-        #   # datagen is a generator object that yields the encoded parameters
-        #   datagen, headers = multipart_encode(
-        #     {"metadata": open('/home/st/workspace/dataprovider-py/samples/data/structured_data/metadata_sec.json','rb'),"data": open(file_path+file_name,'rb')})
-        #
-        #   return _http.Http.request(url=url, data=datagen, headers=headers, method='POST')
+        return ApiClient.post(ApiClient.res.sec_matrices_batch_insert(
+            Store.config_id, datasetsid, table_name), data=http_body, extra_headers=headers
+        )

@@ -12,9 +12,11 @@
 
 """Implements BigQuery HTTP API wrapper."""
 
-import sys
+import os
 
-from st_library.utils.api_client import http, endpoints
+from requests_toolbelt.multipart.encoder import MultipartEncoder
+
+from st_library.utils.api_client import ApiClient
 
 
 class UnstructuredDataService(object):
@@ -35,8 +37,8 @@ class UnstructuredDataService(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        url = endpoints.object_path(table_name, matrices_id)
-        return http.Http.request(url)
+
+        return ApiClient.get(ApiClient.res.object(table_name, matrices_id))
 
     def download_object(self, datasetsid, file_name):
         """ Download an object.
@@ -49,9 +51,8 @@ class UnstructuredDataService(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        url = endpoints.object_download_path(datasetsid, file_name)
-        download_url = http.Http.request(url, raw_response=True)
-        return http.Http.request(download_url, raw_response=True)
+
+        return ApiClient.get(ApiClient.res.object_download(datasetsid, file_name), raw_response=True)
 
     def upload_object(self, datasetsid, file_name, file_path):
         """ Upload file to gcs.
@@ -65,38 +66,20 @@ class UnstructuredDataService(object):
           Exception if there is an error performing the operation.
         """
 
-        url = endpoints.object_path(datasetsid, file_name)
+        path = os.path.join(file_path, file_name)
 
-        if sys.version > '3':
-            from requests_toolbelt.multipart.encoder import MultipartEncoder
-
+        with open(path, 'rb') as f:
             multipart_data = MultipartEncoder(
                 fields={
                     # a file upload field
-                    'file': (file_name,
-                             open(file_path + file_name,
-                                  'rb'), 'text/plain')
+                    'file': (file_name, f, 'text/plain')
                 }
             )
-            headers = {}
+            headers = dict()
             headers['Content-Type'] = multipart_data.content_type
 
-            return http.Http.request(url=url, data=multipart_data, headers=headers, method='POST')
-        else:
-            from poster.encode import multipart_encode
-            from poster.streaminghttp import register_openers
-
-            # Register the streaming http handlers with urllib2
-            register_openers()
-
-            # Start the multipart/form-data encoding of the file
-            # "file" is the name of the parameter, which is normally set
-            # via the "name" parameter of the HTML <input> tag.
-            # headers contains the necessary Content-Type and Content-Length
-            # datagen is a generator object that yields the encoded parameters
-            datagen, headers = multipart_encode(
-                {"file": open(file_path + file_name)})
-            return http.Http.request(url=url, data=datagen, headers=headers, method='POST')
+            return ApiClient.post(ApiClient.res.object(datasetsid, file_name), data=multipart_data,
+                                  extra_headers=headers)
 
     def delete_object(self, datasetsid, file_name):
         """ Delete an object.
@@ -109,5 +92,5 @@ class UnstructuredDataService(object):
         Raises:
           Exception if there is an error performing the operation.
         """
-        url = endpoints.object_path(datasetsid, file_name)
-        return http.Http.request(url=url, method='DELETE')
+
+        return ApiClient.delete(ApiClient.res.object(datasetsid, file_name))

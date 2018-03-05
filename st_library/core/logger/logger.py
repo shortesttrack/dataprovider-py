@@ -1,7 +1,6 @@
 import six
 
-from st_library.utils.api_client import endpoints
-from st_library.utils.api_client.http import Http
+from st_library.utils.api_client import ApiClient
 from st_library.utils.helpers.store import Store
 
 MODE_PRINT = 'mode_print'
@@ -31,7 +30,7 @@ class Logger(object):
                 'analysis': analysis,
                 'data': message
             }
-            Http.request(endpoints.logging_post_path(Store.performance_id), data=payload, method='POST')
+            ApiClient.post(ApiClient.res.logging_post(Store.performance_id), data=payload)
         else:
             six.print_(self._format_message(message, level))
 
