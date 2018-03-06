@@ -74,7 +74,7 @@ def _request(url, method, params, data, extra_headers,
             return content
         return response.json()
 
-    raise exceptions.RequestError(status_code, content)
+    raise exceptions.ServiceRequestError(status_code, content)
 
 
 def get(url, params=None, data=None, extra_headers=None, raw_response=False, stats=None):
@@ -84,7 +84,7 @@ def get(url, params=None, data=None, extra_headers=None, raw_response=False, sta
 
 def post(url, params=None, data=None, extra_headers=None, raw_response=False, stats=None):
     if data is None:
-        raise exceptions.InvalidRequest('Cannot perform POST request without data')
+        raise exceptions.InternalError('Cannot perform POST request without data')
     return _request(url, METHOD_POST, params=params, data=data, extra_headers=extra_headers,
                     raw_response=raw_response, stats=stats)
 

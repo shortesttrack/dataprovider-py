@@ -22,22 +22,58 @@ __all__ = ('Library',)
 
 class Library(Singleton):
     """
-    The Singleton object, which retrieves and holds the Config ID of the Notebook.
+    The Library containing all the required functionality for work with Shortest Track Services.
+
+    Attributes
+    ----------
+    struct_data : :class:`~st_library.core.dataprovider.structured_data.structured_data.StructuredData`
+        A Category for work with structured data
+
+    unstruct_data : :class:`~st_library.core.dataprovider.unstructured_data.unstructured_data.UnstructuredData`
+        A Category for work with unstructured data
+
+    logger : :class:`~st_library.core.logger.logger.Logger`
+        A Category for log messages
+
+    metadata : :class:`~st_library.core.metadata.metadata.Metadata`
+        A Category for work with metadata
+
+    config_id : str
+        ID of the Script Execution Configuration for current Environment
+
+    token : str
+        The Token for current Environment
+
+    performance_id : str
+        ID of the Performance for current Environment
+
+    Methods
+    -------
+    set_config_id(config_id='1686408f-2fc5-4657-b0d3-1c5c6b8e1ad7')
+        Set the ID of Script Execution Configuration for current Environment
+
+    set_token(token='1686408f-2fc5-4657-b0d3-1c5c6b8e1ad7')
+        Set the Token for current Environment
+
+    Examples
+    --------
+        >>> from st_library import Library
+        >>> st_lib = Library()
+        >>> st_lib.set_config_id('1686408f-2fc5-4657-b0d3-1c5c6b8e1ad7')
+        >>> param = st_lib.metadata.get_parameter_value('foo')
+        >>> table = st_lib.struct_data.Table('bar', 'baz', 'bar-baz')
+        >>> table.upload_data('/foo/bar.csv')
+
     """
 
     def __init__(self):
         self.struct_data = StructuredData()
         self.unstruct_data = UnstructuredData()
-        self.metadata = Metadata()
         self.logger = Logger()
+        self.metadata = Metadata()
 
     @property
     def config_id(self):
-        """
-        Retrieves the Configuration UUID.
-        :return:
-        """
-
         return Store.config_id
 
     def set_config_id(self, config_id):
@@ -45,11 +81,6 @@ class Library(Singleton):
 
     @property
     def token(self):
-        """
-        Retrieves the token.
-        :return:
-        """
-
         return Store.token
 
     def set_token(self, token):
@@ -57,8 +88,4 @@ class Library(Singleton):
 
     @property
     def performance_id(self):
-        """
-        Retrieves the performance.
-        :return:
-        """
         return Store.performance_id

@@ -2,29 +2,60 @@ from st_library.core.dataprovider.unstructured_data.item import Item
 
 
 class UnstructuredData(object):
+    """
+    A Category for work with unstructured data
+
+    Attributes
+    ----------
+    Item : object
+        The :class:`~st_library.core.dataprovider.unstructured_data.item.Item` class itself
+
+    """
+
     def __init__(self):
         self.Item = Item
 
-    def download_file(self, datasetsid, filename):
+    def download_file(self, dataset_id, filename):
         """
-        Download files to disk.
-        :return local file path:
+        Download a file to disk.
+
+        Parameters
+        ----------
+        dataset_id : str
+        filename : str
+
+        Returns
+        -------
+        str
+            Local file path
+
         """
-        item = self.Item(datasetsid=datasetsid)
+        item = self.Item(dataset_id=dataset_id)
         return item.download_file(filename)
 
-    def upload_file(self, datasetsid, filename, filepath):
+    def upload_file(self, dataset_id, filename, filepath):
         """
-        Download dataset files to disk.
-        :return local file path:
-        """
-        item = self.Item(datasetsid=datasetsid)
-        return item.upload_file(filename, filepath)
+        Upload a file.
 
-    def delete_file(self, datasetsid, filename):
+        Parameters
+        ----------
+        dataset_id : str
+        filename : str
+        filepath : str
+
         """
-        Download files to disk.
-        :return local file path:
+        item = self.Item(dataset_id=dataset_id)
+        item.upload_file(filename, filepath)
+
+    def delete_file(self, dataset_id, filename):
         """
-        item = self.Item(datasetsid=datasetsid)
-        return item.delete_file(filename)
+        Delete a file.
+
+        Parameters
+        ----------
+        dataset_id : str
+        filename : str
+
+        """
+        item = self.Item(dataset_id=dataset_id)
+        item.delete_file(filename)

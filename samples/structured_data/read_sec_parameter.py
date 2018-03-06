@@ -16,5 +16,5 @@ st_lib = Library()
 st_lib.set_token('Bearer token')
 st_lib.set_config_id('b11c26ec-893e-445c-a5e7-b74f99444e0c')
 
-df = st_lib.struct_data.get_parameter()
+df = st_lib.struct_data.get_parameters()
 print (df)

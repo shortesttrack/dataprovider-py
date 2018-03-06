@@ -13,28 +13,53 @@
 """Implements Table and View Schema APIs."""
 import datetime
 import pandas
+from st_library import exceptions
 
 
 class Schema(list):
-    """Represents the schema of a BigQuery table as a flattened list of objects representing fields.
+    """
+    Represents the schema of a BigQuery table as a flattened list of objects representing fields.
+    Initializes from its raw JSON representation, a Pandas Dataframe, or a list.
 
-     Each field object has name, data_type, mode and description properties. Nested fields
-     get flattened with their full-qualified names. So a Schema that has an object A with nested
-     field B will be represented as [(name: 'A', ...), (name: 'A.b', ...)].
+    Parameters
+    ----------
+    definition
+        a definition of the schema as a list of dictionaries with 'name' and 'type'
+        entries and possibly 'mode' and 'description' entries. Only used if no data argument was
+        provided. 'mode' can be 'NULLABLE', 'REQUIRED' or 'REPEATED'. For the allowed types, see:
+        https://cloud.google.com/bigquery/preparing-data-for-bigquery#datatypes
+
+    Notes
+    -----
+
+    Each field object has name, data_type, mode and description properties. Nested fields
+    get flattened with their full-qualified names. So a Schema that has an object A with nested
+    field B will be represented as [(name: 'A', ...), (name: 'A.b', ...)].
+
     """
 
+    def __init__(self, definition=None):
+        super(Schema, self).__init__()
+        self._map = {}
+        self._bq_schema = definition
+        self._populate_fields(definition)
+
     class Field(object):
-        """ Represents a single field in a Table schema.
+        """
+        Represents a single field in a Table schema.
 
-        This has the properties:
+        Parameters
+        ----------
+        name: str
+            the flattened, full-qualified name of the field.
+        data_type: str
+            the type of the field as a string ('INTEGER', 'BOOLEAN', 'FLOAT', 'STRING' or 'TIMESTAMP').
+        mode: str
+            the mode of the field; 'NULLABLE' by default.
+        description: str
+            a description of the field, if known; empty string by default.
 
-        - name: the flattened, full-qualified name of the field.
-        - data_type: the type of the field as a string ('INTEGER', 'BOOLEAN', 'FLOAT', 'STRING'
-           or 'TIMESTAMP').
-        - mode: the mode of the field; 'NULLABLE' by default.
-        - description: a description of the field, if known; empty string by default.
-
-         """
+        """
 
         # TODO(gram): consider renaming data_type member to type. Yes, it shadows top-level
         # name but that is what we are using in __str__ and __getitem__ and is what is used in BQ.
@@ -46,10 +71,13 @@ class Schema(list):
             self.description = description
 
         def _repr_sql_(self):
-            """Returns a representation of the field for embedding into a SQL statement.
+            """
 
-            Returns:
-              A formatted field name for use within SQL statements.
+            Returns a representation of the field for embedding into a SQL statement.
+
+            Returns
+            -------
+            A formatted field name for use within SQL statements.
             """
             return self.name
 
@@ -84,19 +112,30 @@ class Schema(list):
     @staticmethod
     def _from_dataframe(dataframe, default_type='STRING'):
         """
-          Infer a BigQuery table schema from a Pandas dataframe. Note that if you don't explicitly set
-          the types of the columns in the dataframe, they may be of a type that forces coercion to
-          STRING, so even though the fields in the dataframe themselves may be numeric, the type in the
-          derived schema may not be. Hence it is prudent to make sure the Pandas dataframe is typed
-          correctly.
+        Infer a BigQuery table schema from a Pandas dataframe.
 
-        Args:
-          dataframe: The DataFrame.
-          default_type : The default big query type in case the type of the column does not exist in
-              the schema. Defaults to 'STRING'.
-        Returns:
-          A list of dictionaries containing field 'name' and 'type' entries, suitable for use in a
-              BigQuery Tables resource schema.
+        Parameters
+        ----------
+        dataframe
+            The DataFrame.
+
+        default_type
+            The default big query type in case the type of the column does not exist in
+            the schema. Defaults to 'STRING'.
+
+        Returns
+        -------
+            A list of dictionaries containing field 'name' and 'type' entries, suitable for use in a
+            BigQuery Tables resource schema.
+
+        Notes
+        -----
+        Note that if you don't explicitly set
+        the types of the columns in the dataframe, they may be of a type that forces coercion to
+        STRING, so even though the fields in the dataframe themselves may be numeric, the type in the
+        derived schema may not be. Hence it is prudent to make sure the Pandas dataframe is typed
+        correctly.
+
         """
 
         type_mapping = {
@@ -119,18 +158,24 @@ class Schema(list):
     @staticmethod
     def from_dataframe(dataframe, default_type='STRING'):
         """
-          Infer a BigQuery table schema from a Pandas dataframe. Note that if you don't explicitly set
-          the types of the columns in the dataframe, they may be of a type that forces coercion to
-          STRING, so even though the fields in the dataframe themselves may be numeric, the type in the
-          derived schema may not be. Hence it is prudent to make sure the Pandas dataframe is typed
-          correctly.
+        Infer a BigQuery table schema from a Pandas dataframe. Note that if you don't explicitly set
+        the types of the columns in the dataframe, they may be of a type that forces coercion to
+        STRING, so even though the fields in the dataframe themselves may be numeric, the type in the
+        derived schema may not be. Hence it is prudent to make sure the Pandas dataframe is typed
+        correctly.
 
-        Args:
-          dataframe: The DataFrame.
-          default_type : The default big query type in case the type of the column does not exist in
-              the schema. Defaults to 'STRING'.
-        Returns:
-          A Schema.
+        Parameters
+        ----------
+        dataframe
+            The DataFrame.
+        default_type
+            The default big query type in case the type of the column does not exist in
+            the schema. Defaults to 'STRING'.
+
+        Returns
+        -------
+        A :class:`~st_library.core.dataprovider.structured_data.schema.Schema` class itself.
+
         """
         return Schema(Schema._from_dataframe(dataframe, default_type=default_type))
 
@@ -160,11 +205,16 @@ class Schema(list):
         are in turn OrderedDicts these will be turned into RECORD types. Ideally this will
         be an OrderedDict but it is not required.
 
-        Args:
-          data: The dict to infer a schema from.
-        Returns:
-          A list of dictionaries containing field 'name' and 'type' entries, suitable for use in a
-              BigQuery Tables resource schema.
+        Parameters
+        ----------
+        data
+            The dict to infer a schema from.
+
+        Returns
+        -------
+        A list of dictionaries containing field 'name' and 'type' entries, suitable for use in a
+        BigQuery Tables resource schema.
+
         """
         return [Schema._get_field_entry(name, value) for name, value in list(data.items())]
 
@@ -173,11 +223,16 @@ class Schema(list):
         """
         Infer a BigQuery table schema from a list of values.
 
-        Args:
-          data: The list of values.
-        Returns:
-          A list of dictionaries containing field 'name' and 'type' entries, suitable for use in a
-              BigQuery Tables resource schema.
+        Parameters
+        ----------
+        data
+            The list of values.
+
+        Returns
+        -------
+        A list of dictionaries containing field 'name' and 'type' entries,
+        suitable for use in a BigQuery Tables resource schema.
+
         """
         return [Schema._get_field_entry('Column%d' % (i + 1), value) for i, value in enumerate(data)]
 
@@ -187,18 +242,28 @@ class Schema(list):
         Infer a BigQuery table schema from a list of fields or a dictionary. The typeof the elements
         is used. For a list, the field names are simply 'Column1', 'Column2', etc.
 
-        Args:
-          data: The list of fields or dictionary.
-        Returns:
-          A list of dictionaries containing field 'name' and 'type' entries, suitable for use in a
-              BigQuery Tables resource schema.
+        Parameters
+        ----------
+        data
+            The list of fields or dictionary.
+
+        Returns
+        -------
+        A list of dictionaries containing field 'name' and 'type' entries, suitable for use in a
+        BigQuery Tables resource schema.
+
+        Raises
+        ------
+        exceptions.SchemaCreationError
+            If a schema cannot be created
+
         """
         if isinstance(data, dict):
             return Schema._from_dict_record(data)
         elif isinstance(data, list):
             return Schema._from_list_record(data)
         else:
-            raise Exception('Cannot create a schema from record %s' % str(data))
+            raise exceptions.SchemaCreationError('Cannot create a schema from record %s' % str(data))
 
     @staticmethod
     def from_record(source):
@@ -209,11 +274,15 @@ class Schema(list):
         'Column1', 'Column2', etc. Note that if using a dict you may want to use an OrderedDict
         to ensure column ordering is deterministic.
 
-        Args:
-          source: The list of field values or dictionary of key/values.
+        Parameters
+        ----------
+        source
+            The list of field values or dictionary of key/values.
 
-        Returns:
-          A Schema for the data.
+        Returns
+        -------
+            A Schema for the data.
+
         """
         # TODO(gram): may want to allow an optional second argument which is a list of field
         # names; could be useful for the record-containing-list case.
@@ -221,26 +290,37 @@ class Schema(list):
 
     @staticmethod
     def from_data(source):
-        """Infers a table/view schema from its JSON representation, a list of records, or a Pandas
-           dataframe.
+        """
+        Infers a table/view schema from its JSON representation, a list of records, or a Pandas dataframe.
 
-        Args:
-          source: the Pandas Dataframe, a dictionary representing a record, a list of heterogeneous
-              data (record) or homogeneous data (list of records) from which to infer the schema, or
-              a definition of the schema as a list of dictionaries with 'name' and 'type' entries
-              and possibly 'mode' and 'description' entries. Only used if no data argument was provided.
-              'mode' can be 'NULLABLE', 'REQUIRED' or 'REPEATED'. For the allowed types, see:
-              https://cloud.google.com/bigquery/preparing-data-for-bigquery#datatypes
+        Parameters
+        ----------
+        source
+            the Pandas Dataframe, a dictionary representing a record, a list of heterogeneous
+            data (record) or homogeneous data (list of records) from which to infer the schema, or
+            a definition of the schema as a list of dictionaries with 'name' and 'type' entries
+            and possibly 'mode' and 'description' entries. Only used if no data argument was provided.
+            'mode' can be 'NULLABLE', 'REQUIRED' or 'REPEATED'. For the allowed types, see:
+            https://cloud.google.com/bigquery/preparing-data-for-bigquery#datatypes
 
-              Note that there is potential ambiguity when passing a list of lists or a list of
-              dicts between whether that should be treated as a list of records or a single record
-              that is a list. The heuristic used is to check the length of the entries in the
-              list; if they are equal then a list of records is assumed. To avoid this ambiguity
-              you can instead use the Schema.from_record method which assumes a single record,
-              in either list of values or dictionary of key-values form.
+        Returns
+        -------
+        A Schema for the data.
 
-        Returns:
-          A Schema for the data.
+        Notes
+        -----
+        Note that there is potential ambiguity when passing a list of lists or a list of
+        dicts between whether that should be treated as a list of records or a single record
+        that is a list. The heuristic used is to check the length of the entries in the
+        list; if they are equal then a list of records is assumed. To avoid this ambiguity
+        you can instead use the Schema.from_record method which assumes a single record,
+        in either list of values or dictionary of key-values form.
+
+        Raises
+        ------
+        exceptions.SchemaCreationError
+            If a schema cannot be created
+
         """
         if isinstance(source, pandas.DataFrame):
             bq_schema = Schema._from_dataframe(source)
@@ -254,36 +334,24 @@ class Schema(list):
                 elif all(len(d) == len(source[0]) for d in source):
                     bq_schema = Schema._from_dict_record(source[0])
                 else:
-                    raise Exception(('Cannot create a schema from heterogeneous list %s; perhaps you meant ' +
-                                     'to use Schema.from_record?') % str(source))
+                    raise exceptions.SchemaCreationError(('Cannot create a schema from '
+                                                          'heterogeneous list %s; perhaps you meant ' +
+                                                          'to use Schema.from_record?') % str(source))
             elif isinstance(source[0], list) and \
                     all([isinstance(l, list) and len(l) == len(source[0]) for l in source]):
                 # A list of lists all of the same length; treat first entry as a list record.
                 bq_schema = Schema._from_record(source[0])
             else:
                 # A heterogeneous list; treat as a record.
-                raise Exception(('Cannot create a schema from heterogeneous list %s; perhaps you meant ' +
-                                 'to use Schema.from_record?') % str(source))
+                raise exceptions.SchemaCreationError(('Cannot create a schema from heterogeneous '
+                                                      'list %s; perhaps you meant ' +
+                                                      'to use Schema.from_record?') % str(source))
         elif isinstance(source, dict):
-            raise Exception(('Cannot create a schema from dict %s; perhaps you meant to use ' +
-                             'Schema.from_record?') % str(source))
+            raise exceptions.SchemaCreationError(('Cannot create a schema from dict %s; perhaps you meant to use ' +
+                                                  'Schema.from_record?') % str(source))
         else:
-            raise Exception('Cannot create a schema from %s' % str(source))
+            raise exceptions.SchemaCreationError('Cannot create a schema from %s' % str(source))
         return Schema(bq_schema)
-
-    def __init__(self, definition=None):
-        """Initializes a Schema from its raw JSON representation, a Pandas Dataframe, or a list.
-
-        Args:
-          definition: a definition of the schema as a list of dictionaries with 'name' and 'type'
-              entries and possibly 'mode' and 'description' entries. Only used if no data argument was
-              provided. 'mode' can be 'NULLABLE', 'REQUIRED' or 'REPEATED'. For the allowed types, see:
-              https://cloud.google.com/bigquery/preparing-data-for-bigquery#datatypes
-        """
-        super(Schema, self).__init__()
-        self._map = {}
-        self._bq_schema = definition
-        self._populate_fields(definition)
 
     def __getitem__(self, key):
         """Provides ability to lookup a schema field by position or by name.
@@ -299,12 +367,17 @@ class Schema(list):
         self._map[name] = field
 
     def find(self, name):
-        """ Get the index of a field in the flattened list given its (fully-qualified) name.
+        """
+        Get the index of a field in the flattened list given its (fully-qualified) name.
 
-        Args:
-          name: the fully-qualified name of the field.
-        Returns:
-          The index of the field, if found; else -1.
+        Parameters
+        ----------
+        name
+            the fully-qualified name of the field.
+
+        Returns
+        -------
+        The index of the field, if found; else -1.
         """
         for i in range(0, len(self)):
             if self[i].name == name:

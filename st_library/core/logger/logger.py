@@ -17,6 +17,50 @@ LEVEL_EMERGENCY = 'EMERGENCY'
 
 
 class Logger(object):
+    """
+    A Category for log messages
+
+    Methods
+    -------
+    debug(message='foo', analysis=False)
+        Log with DEBUG level
+
+    info(message='foo', analysis=False)
+        Log with INFO level
+
+    notice(message='foo', analysis=False)
+        Log with NOTICE level
+
+    warning(message='foo', analysis=False)
+        Log with WARNING level
+
+    error(message='foo', analysis=False)
+        Log with ERROR level
+
+    critical(message='foo', analysis=False)
+        Log with CRITICAL level
+
+    alert(message='foo', analysis=False)
+        Log with ALERT level
+
+    emergency(message='foo', analysis=False)
+        Log with EMERGENCY level
+
+    Notes
+    -----
+
+    The target for logging data is depends on the existence of the performance_id for current Environment.
+    If performance_id is specified, then all the data will be sent to ST Services.
+    Otherwise, it will be just printed to stdout
+
+    Examples
+    --------
+
+        >>> from st_library import Library
+        >>> st_lib = Library()
+        >>> st_lib.logger.info('Script started.')
+
+    """
     def __init__(self):
         self._mode = MODE_SEND if Store.performance_id else MODE_PRINT
 

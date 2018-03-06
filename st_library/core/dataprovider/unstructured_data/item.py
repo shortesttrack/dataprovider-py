@@ -10,7 +10,6 @@
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
 
-"""Implements Table, and related Table BigQuery APIs."""
 from st_library.utils.api_client.services.unstructured_data import UnstructuredDataService
 
 
@@ -18,7 +17,15 @@ from st_library.utils.api_client.services.unstructured_data import UnstructuredD
 # Query.execute().results -> Table and Table.sample() -> Query
 
 class Item(object):
-    """Represents a Table object referencing a BigQuery table. """
+    """
+    Represents an unstructured Item object
+
+    Parameters
+    ----------
+    matrix_id
+    dataset_id
+
+    """
 
     # Allowed characters in a BigQuery table column name
     _VALID_COLUMN_NAME_CHARACTERS = '_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -29,30 +36,22 @@ class Item(object):
     # Milliseconds per week
     _MSEC_PER_WEEK = 7 * 24 * 3600 * 1000
 
-    def __init__(self, matricesid=None, datasetsid=None):
-        """Initializes an instance of a Table object. The Table need not exist yet.
-
-        Args:
-          name: the name of the table either as a string or a 3-part tuple (projectid, datasetid, name).
-            If a string, it must have the form '<project>:<dataset>.<table>' or '<dataset>.<table>'.
-          context: an optional Context object providing project_id and credentials. If a specific
-            project id or credentials are unspecified, the default ones configured at the global
-            level are used.
-        Raises:
-          Exception if the name is invalid.
-        """
-
+    def __init__(self, matrix_id=None, dataset_id=None):
         self._service = UnstructuredDataService()
-        self._datasets_id = datasetsid
+        self._datasets_id = dataset_id
         self._cached_page = None
         self._cached_page_index = 0
         self._schema = None
 
     def download_file(self, filename=None):
-        """ Download dataset files to disk.
+        """
+        Download dataset files to disk.
 
-        Args:
-          filename: the name of the dataset files.
+        Parameters
+        ----------
+        filename
+            the name of the dataset files.
+
         """
         raw_data = self._service.download_object(self._datasets_id, filename)
 
@@ -62,17 +61,27 @@ class Item(object):
         return filename
 
     def upload_file(self, filename=None, filepath=None):
-        """ Upload files to gcs.
+        """
+        Upload files to gcs.
 
-        Args:
-          filename: the name of the file.
+        Parameters
+        ----------
+        filename
+            the name of the file.
+        filepath
+            the path to the file
+
         """
         return self._service.upload_object(self._datasets_id, filename, filepath)
 
     def delete_file(self, filename=None):
-        """ Delete files from gcs.
+        """
+        Delete files from gcs.
 
-        Args:
-          filename: the name of the file.
+        Parameters
+        ----------
+        filename
+            the name of the file.
+
         """
         return self._service.delete_object(self._datasets_id, filename)

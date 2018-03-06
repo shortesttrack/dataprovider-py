@@ -1,11 +1,19 @@
 import json
 
 
-class STLibraryException(Exception):
-    pass
+class LibraryException(Exception):
+    """
+    Base exception class for the Library.
+
+    """
 
 
-class RequestError(STLibraryException):
+class ServiceRequestError(LibraryException):
+    """
+    This exception is raised when request to the Service failed.
+
+    """
+
     def __init__(self, status, content):
         self.status = status
         self.content = content
@@ -26,5 +34,23 @@ class RequestError(STLibraryException):
         return self.message
 
 
-class InvalidRequest(STLibraryException):
-    pass
+class InternalError(LibraryException):
+    """
+    An internal logic error.
+
+    """
+
+
+class PerformanceRequired(LibraryException):
+    """
+    This exception is raised when Performance is mandatory for executing operation,
+    but it is not defined for current Environment.
+
+    """
+
+
+class SchemaCreationError(LibraryException):
+    """
+    An error of schema creation
+
+    """

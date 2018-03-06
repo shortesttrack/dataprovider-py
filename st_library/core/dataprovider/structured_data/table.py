@@ -16,13 +16,33 @@ import pandas
 from st_library.core.dataprovider.structured_data import parser
 from st_library.core.dataprovider.structured_data import schema
 from st_library.utils.api_client.services.structured_data import StructuredDataService
+from st_library import exceptions
 
 
 # import of Query is at end of module as we have a circular dependency of
 # Query.execute().results -> Table and Table.sample() -> Query
 
 class Table(object):
-    """Represents a Table object referencing a BigQuery table. """
+    """
+    Represents a Table object referencing a BigQuery table.
+
+    Parameters
+    ----------
+    matrix_id : str
+    dataset_id : str
+    name : str
+        The name of the table
+    context
+    config_related : bool
+        This parameter determines whether the table is related to
+        Script Execution Configuration or not
+
+    Attributes
+    ----------
+    schema : :class:`~st_library.core.dataprovider.structured_data.schema.Schema`
+        A Schema object containing a list of schema fields and associated metadata.
+
+    """
 
     # Allowed characters in a BigQuery table column name
     _VALID_COLUMN_NAME_CHARACTERS = '_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -33,23 +53,12 @@ class Table(object):
     # Milliseconds per week
     _MSEC_PER_WEEK = 7 * 24 * 3600 * 1000
 
-    def __init__(self, matricesid=None, datasetsid=None, name=None, context=None, config_related=False):
-        """Initializes an instance of a Table object. The Table need not exist yet.
-
-        Args:
-          matricesid:
-          datasetsid:
-          name: the name of the table.
-          context:
-
-        Raises:
-          Exception if the name is invalid.
-        """
+    def __init__(self, matrix_id=None, dataset_id=None, name=None, context=None, config_related=False):
         self._context = context
         self._service = StructuredDataService()
         self._name_parts = name
-        self._datasets_id = datasetsid
-        self._matrices_id = matricesid
+        self._datasets_id = dataset_id
+        self._matrices_id = matrix_id
         self._info = None
         self._cached_page = None
         self._cached_page_index = 0
@@ -57,7 +66,9 @@ class Table(object):
         self._config_related = config_related
 
     def _load_info(self):
-        """Loads metadata about this table."""
+        """
+        Loads metadata about this table.
+        """
         if self._info is None:
             try:
                 self._info = self._service.tables_get(self._matrices_id)
@@ -65,20 +76,32 @@ class Table(object):
                 raise e
 
     def _get_row_fetcher(self, start_row=0, max_rows=None, page_size=_DEFAULT_PAGE_SIZE):
-        """ Get a function that can retrieve a page of rows.
+        """
+        Get a function that can retrieve a page of rows.
 
-        The function returned is a closure so that it can have a signature suitable for use
-        by Iterator.
+        Parameters
+        ----------
+            start_row: int
+                the row to start fetching from; default 0.
 
-        Args:
-          start_row: the row to start fetching from; default 0.
-          max_rows: the maximum number of rows to fetch (across all calls, not per-call). Default
-              is None which means no limit.
-          page_size: the maximum number of results to fetch per page; default 1024.
-        Returns:
-          A function that can be called repeatedly with a page token and running count, and that
-          will return an array of rows and a next page token; when the returned page token is None
-          the fetch is complete.
+            max_rows: int
+                the maximum number of rows to fetch (across all calls, not per-call). Default
+                is None which means no limit.
+
+            page_size: int
+                the maximum number of results to fetch per page; default 1024.
+
+        Returns
+        -------
+            `callable` A function that can be called repeatedly with a page token and running count, and that
+            will return an array of rows and a next page token; when the returned page token is None
+            the fetch is complete.
+
+        Notes
+        -----
+            The function returned is a closure so that it can have a signature suitable for use
+            by Iterator.
+
         """
         if not start_row:
             start_row = 0
@@ -126,13 +149,21 @@ class Table(object):
         return _retrieve_rows
 
     def to_dataframe(self, start_row=0, max_rows=None):
-        """ Exports the table to a Pandas dataframe.
+        """
+        Exports the table to a Pandas dataframe.
 
-        Args:
-          start_row: the row of the table at which to start the export (default 0)
-          max_rows: an upper limit on the number of rows to export (default None)
-        Returns:
-          A Pandas dataframe containing the table data.
+        Parameters
+        ----------
+            start_row: int
+                the row of the table at which to start the export (default 0)
+
+            max_rows: int
+                an upper limit on the number of rows to export (default None)
+
+        Returns
+        -------
+            :class:`pandas.DataFrame` containing the table data.
+
         """
         fetcher = self._get_row_fetcher(start_row=start_row, max_rows=max_rows)
         count = 0
@@ -155,59 +186,62 @@ class Table(object):
 
     @property
     def schema(self):
-        """Retrieves the schema of the table.
-
-        Returns:
-          A Schema object containing a list of schema fields and associated metadata.
-        Raises
-          Exception if the request could not be executed or the response was malformed.
-        """
         if not self._schema:
             try:
                 self._load_info()
                 self._schema = schema.Schema(self._info['matrixScheme']['fieldSchemes'])
 
             except KeyError:
-                raise Exception('Unexpected table response: missing schema')
+                raise exceptions.InternalError('Unexpected table response: missing schema')
         return self._schema
 
     def upload_data(self, filename=None):
-        """ Upload csv data file to table.
+        """
+        Upload csv data file to table.
 
-        Args:
-          filename: the name of the csv file.
+        Parameters
+        ----------
+        filename: str
+            the name of the csv file
+
         """
         response = self._service.tabledata_post(self._datasets_id, self._name_parts, filename)
 
     def insert_data(self, json_data=None):
-        """ Insert streams data into matrix.
+        """
+        Insert streams data into matrix.
 
-        Args:
-          json_data:  the records of the matrix.
+        Parameters
+        ----------
+        json_data: object
+            the records of the matrix
+
         """
         response = self._service.insert_data(self._datasets_id, self._name_parts, json_data)
 
     def insert_sec_data(self, json_data=None):
-        """ Insert streams data into matrix.
+        """
+        Insert streams data into matrix.
 
-        Args:
-          json_data:  the records of the matrix.
+        Parameters
+        ----------
+        json_data: object
+            the records of the matrix
+
         """
         response = self._service.insert_sec_data(self._datasets_id, self._name_parts, json_data)
 
     def insert_batch_sec_data(self, file_path=None, file_name=None):
-        """ Insert streams data into matrix.
+        """
+        Insert streams data into matrix.
 
-        Args:
-          json_data:  the records of the matrix.
+        Parameters
+        ----------
+        file_path: str
+            the path to the csv file
+
+        file_name: str
+            the name of the csv file
+
         """
         response = self._service.insert_batch_sec_data(self._datasets_id, self._name_parts, file_path, file_name)
-
-    def get_parameter_data(self):
-        """ Insert streams data into matrix.
-
-        Args:
-          json_data:  the records of the matrix.
-        """
-        script_dict = self._service.tables_get_parameter()
-        return script_dict['parameters']

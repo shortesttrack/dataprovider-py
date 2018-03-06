@@ -33,7 +33,7 @@ class StructuredDataService(object):
         """
         return ApiClient.get(ApiClient.res.matrices(matrices_id))
 
-    def tables_get_parameter(self):
+    def tables_get_parameters(self):
         """Issues a request to retrieve the parameter of the script execution configuration.
 
         Args:
