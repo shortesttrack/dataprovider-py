@@ -50,7 +50,6 @@ Support package for Shortest Track Library. This provides Python APIs
 for accessing Shortest Track Platform services such as structured data storage.
   """,
   install_requires=[
-    'poster==0.8.1',
     'requests-toolbelt==0.8.0',
     'pandas==0.19.1',
     'urlobject==2.4.3',

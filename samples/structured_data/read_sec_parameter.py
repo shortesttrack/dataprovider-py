@@ -10,9 +10,11 @@
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
 
-import st_library.dataprovider as datapv
-st_lib = datapv.Library()
-st_lib.set_token('Bearer token')
+from st_library import Library
 
-df = st_lib.get_parameter("b11c26ec-893e-445c-a5e7-b74f99444e0c")
+st_lib = Library()
+st_lib.set_token('Bearer token')
+st_lib.set_config_id('b11c26ec-893e-445c-a5e7-b74f99444e0c')
+
+df = st_lib.struct_data.get_parameters()
 print (df)
