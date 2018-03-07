@@ -21,9 +21,9 @@ setup(
   version=version,
   namespace_packages=['st_library'],
   packages=[
-    'st_library.dataprovider',
-    'st_library.dataprovider.structured_data',
-    'st_library.dataprovider.unstructured_data'
+    'st_library.core.dataprovider',
+    'st_library.core.dataprovider.structured_data',
+    'st_library.core.dataprovider.unstructured_data'
   ],
   description='shortest track dataprovider',
   author='Fugui Xing',
