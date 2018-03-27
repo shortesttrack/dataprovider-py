@@ -51,4 +51,4 @@ class Metadata(object):
 
         performance_id = Store.performance_id
         ApiClient.post(ApiClient.res.performance_output_parameter_post(parameter_id, performance_id),
-                       data={'value': parameter_value})
+                       json={'value': parameter_value})

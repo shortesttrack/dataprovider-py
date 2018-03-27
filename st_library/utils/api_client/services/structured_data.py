@@ -121,7 +121,7 @@ class StructuredDataService(object):
         """
 
         return ApiClient.post(ApiClient.res.sec_matrices_insert(
-            Store.config_id, datasetsid, table_name), data=json_data
+            Store.config_id, datasetsid, table_name), json=json_data
         )
 
     def insert_batch_sec_data(self, datasetsid, table_name, file_path, file_name):
