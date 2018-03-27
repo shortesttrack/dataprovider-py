@@ -12,47 +12,50 @@
 
 # To publish to PyPi use: python setup.py bdist_wheel upload -r pypi
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
-version = '1.0.7'
+version = '1.0.8'
 
 setup(
-  name='st-dataprovider',
-  version=version,
-  namespace_packages=['st_library'],
-  packages=[
-    'st_library.dataprovider',
-    'st_library.dataprovider.structured_data',
-    'st_library.dataprovider.unstructured_data'
-  ],
-  description='shortest track dataprovider',
-  author='Fugui Xing',
-  author_email='admin@shortesttrack.com',
-  url='https://github.com/shortesttrack/dataprovider-py',
-  download_url='https://github.com/shortesttrack/dataprovider-py/archive/v1.0.7.zip',
-  keywords=[
-    'Shortest Track',
-    'st_library',
-    'dataprovider'
-  ],
-  license="Apache Software License",
-  classifiers=[
-      "Programming Language :: Python :: 2",
-      "Programming Language :: Python :: 3",
-      "Environment :: Other Environment",
-      "Intended Audience :: Developers",
-      "License :: OSI Approved :: Apache Software License",
-      "Operating System :: OS Independent",
-      "Topic :: Software Development :: Libraries :: Python Modules"
-  ],
-  long_description="""\
+    name='st-dataprovider',
+    version=version,
+    namespace_packages=['st_library'],
+    packages=[
+        find_packages()
+    ],
+    description='shortest track dataprovider',
+    author='Fugui Xing',
+    author_email='admin@shortesttrack.com',
+    url='https://github.com/shortesttrack/dataprovider-py',
+    download_url='https://github.com/shortesttrack/dataprovider-py/archive/v1.0.8.zip',
+    keywords=[
+        'Shortest Track',
+        'st_library',
+        'dataprovider'
+    ],
+    license="Apache Software License",
+    classifiers=[
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
+        "Environment :: Other Environment",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: Apache Software License",
+        "Operating System :: OS Independent",
+        "Topic :: Software Development :: Libraries :: Python Modules"
+    ],
+    long_description="""\
 Support package for Shortest Track Library. This provides Python APIs
 for accessing Shortest Track Platform services such as structured data storage.
   """,
-  install_requires=[
-    'requests-toolbelt==0.8.0',
-    'pandas==0.19.1',
-    'urlobject==2.4.3',
-    'six==1.11.0',
-  ]
+    install_requires=[
+        'requests-toolbelt==0.8.0',
+        'pandas==0.19.1',
+        'urlobject==2.4.3',
+        'six==1.11.0',
+        'python-dateutil==2.7.0',
+        'PyJWT==1.6.1',
+        'cryptography==2.2.1',
+        'mock==2.0.0',
+        'pytz==2018.3'
+    ]
 )

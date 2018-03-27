@@ -1,0 +1,19 @@
+{
+  "sub": "12345",
+  "aud": [
+    "web_app"
+  ],
+  "companyId": "test_company",
+  "scope": [
+    "/script-execution-configurations/123"
+  ],
+  "iss": "shortesttrack-uaa",
+  "exp": 1521713045,
+  "iat": 1521712745,
+  "authorities": [
+    "ROLE_SCRIPT"
+  ],
+  "jti": "99999",
+  "email": "N/A",
+  "client_id": "script"
+}
