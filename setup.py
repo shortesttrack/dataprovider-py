@@ -14,20 +14,17 @@
 
 from setuptools import setup, find_packages
 
-version = '1.0.8'
+version = '1.0.8-2'
 
 setup(
     name='st-dataprovider',
     version=version,
-    namespace_packages=['st_library'],
-    packages=[
-        find_packages()
-    ],
+    packages=find_packages(),
     description='shortest track dataprovider',
     author='Fugui Xing',
     author_email='admin@shortesttrack.com',
     url='https://github.com/shortesttrack/dataprovider-py',
-    download_url='https://github.com/shortesttrack/dataprovider-py/archive/v1.0.8.zip',
+    download_url='https://github.com/shortesttrack/dataprovider-py/archive/v1.0.8-2.zip',
     keywords=[
         'Shortest Track',
         'st_library',
