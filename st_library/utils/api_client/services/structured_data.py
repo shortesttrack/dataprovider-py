@@ -21,17 +21,18 @@ from st_library.utils.api_client import ApiClient
 class StructuredDataService(object):
     """A helper class to issue BigQuery HTTP requests."""
 
-    def tables_get(self, matrices_id):
+    def tables_get(self, dataset_id, matrices_id):
         """Issues a request to retrieve information about a table.
 
         Args:
+          dataset_id: .
           matrices_id: .
         Returns:
           A parsed result object.
         Raises:
           Exception if there is an error performing the operation.
         """
-        return ApiClient.get(ApiClient.res.matrices(matrices_id))
+        return ApiClient.get(ApiClient.res.matrices_get(dataset_id, matrices_id))
 
     def tables_get_parameters(self):
         """Issues a request to retrieve the parameter of the script execution configuration.

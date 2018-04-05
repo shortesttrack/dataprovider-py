@@ -13,7 +13,7 @@
 from st_library import Library
 
 st_lib = Library()
-st_lib.set_token('Bearer token')
+st_lib.set_token('token')
 st_lib.set_config_id('98a599e9-e5b8-49fc-b5ca-0750bb0a785b')
 
 df = st_lib.struct_data.read_sec_matrix("bd94d0d1-30ef-4fa4-900f-e99ef4e33dcd", "62a9058c_07e8_4c61_8da0_0f822952447e", "NewTableForXing")

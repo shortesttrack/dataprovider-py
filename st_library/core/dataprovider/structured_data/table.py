@@ -71,7 +71,7 @@ class Table(object):
         """
         if self._info is None:
             try:
-                self._info = self._service.tables_get(self._matrices_id)
+                self._info = self._service.tables_get(self._datasets_id, self._matrices_id)
             except Exception as e:
                 raise e
 

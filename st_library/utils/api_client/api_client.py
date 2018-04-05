@@ -7,6 +7,15 @@ class ApiClient(object):
         raise TypeError('This class should not be initialized')
 
     res = resource
-    get = request.get
-    post = request.post
-    delete = request.delete
+
+    @staticmethod
+    def get(*args, **kwargs):
+        return request.get(*args, **kwargs)
+
+    @staticmethod
+    def post(*args, **kwargs):
+        return request.post(*args, **kwargs)
+
+    @staticmethod
+    def delete(*args, **kwargs):
+        return request.delete(*args, **kwargs)

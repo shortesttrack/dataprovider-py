@@ -1,7 +1,7 @@
 from st_library import Library
 
 st_lib = Library()
-st_lib.set_token('Bearer token')
+st_lib.set_token('token')
 st_lib.set_config_id('52db99d3-edfb-44c5-b97a-f09df4402081')
 
 tbl = st_lib.struct_data.Table(datasetsid="9c6db384-93a0-467e-b767-10689e2b07f7", name="customerdsmatrix")
