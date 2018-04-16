@@ -34,6 +34,19 @@ class StructuredDataService(object):
         """
         return ApiClient.get(ApiClient.res.matrices_get(dataset_id, matrices_id))
 
+    def tables_get_by_sql(self, query_job_id):
+        """Issues a request to retrieve information about a table.
+
+        Args:
+          dataset_id: .
+          matrices_id: .
+        Returns:
+          A parsed result object.
+        Raises:
+          Exception if there is an error performing the operation.
+        """
+        return ApiClient.get(ApiClient.res.matrices_get_by_sql(query_job_id))
+
     def tables_get_parameters(self):
         """Issues a request to retrieve the parameter of the script execution configuration.
 
@@ -62,6 +75,32 @@ class StructuredDataService(object):
             url = ApiClient.res.sec_matrices_get(Store.config_id, datasetsid, table_name)
         else:
             url = ApiClient.res.matrices_get(datasetsid, table_name)
+        params = {}
+        if start_index:
+            params['startIndex'] = start_index
+        if max_results:
+            params['maxResults'] = max_results
+        if page_token is not None:
+            params['pageToken'] = page_token
+
+        return ApiClient.get(url, params=params)
+
+    def tabledata_list_by_sql(self, query_job_id, start_index=None, max_results=None, page_token=None):
+        """ Retrieves the contents of a table.
+
+        Args:
+          table_name: the name of the table as a tuple of components.
+          start_index: the index of the row at which to start retrieval.
+          max_results: an optional maximum number of rows to retrieve.
+          page_token: an optional token to continue the retrieval.
+        Returns:
+          A parsed result object.
+        Raises:
+          Exception if there is an error performing the operation.
+        """
+
+        url = ApiClient.res.sec_matrices_get_by_sql(query_job_id)
+
         params = {}
         if start_index:
             params['startIndex'] = start_index

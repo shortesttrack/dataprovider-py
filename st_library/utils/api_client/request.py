@@ -42,7 +42,8 @@ class _SharedApiClientAdapter(BaseApiClient, SecAccessTokenMixin):
         return Store.token_data.get('expiration')
 
     def _get_auth_string(self):
-        return ''
+        return 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjNDkzZmI5MS02YWE4LTRiODItYjA2Ni0wZTkxYzQ4MjZkOTciLCJhdWQiOlsid2ViX2FwcCJdLCJjb21wYW55SWQiOiJzaG9ydGVzdHRyYWNrX3Jvb3RfYWRtaW5fY29tcGFueSIsInNjb3BlIjpbIm9wZW5pZCJdLCJpc3MiOiJzaG9ydGVzdHRyYWNrLXVhYSIsImV4cCI6MTUyMzcwNjU0OCwiaWF0IjoxNTIzNzA2MjQ4LCJhdXRob3JpdGllcyI6WyJST0xFX1JPT1QiXSwianRpIjoiNzlhOTEyNTktODc2Mi00OTE0LTgxOTgtMTVhOTk0M2ExMzQwIiwiZW1haWwiOiJyb290QGxvY2FsaG9zdCIsImNsaWVudF9pZCI6IndlYl9hcHAifQ.fBOQBe_y7gJO_Rm45o1HlnObkpoEPz0o22A0crlH1CAnYgSmGYog4yU4OuWveVQqNK92Lmsl2M2M7f_Hyqbret8b56PwEiLCOVlIqGPrtwXrfQJfNUoYGwELEpWBD4ERv2Kc8OHivRJp92Qvb9eUmkQ01S31dVj5OU0tbJRSZOk8CiOkmrM3oyIfSqp63dIBQWDmjnlMgrJ7nXsUH_yK5UdzmcPJgdGIk3QxaLbjZDlaewB2Ghc-sdCyOXKcxjK1GinIdAW5d6ZJAp4RcDDnM1Tg1h-TLoxPTk2u09zj7OS67luyaS_0xPMVI0TaF74FKf7TVOPqV0Jv8WxrVVb90Q'
+        # return ''
 
     def get_sec_refresh_token(self, configuration_id):
         return Store.token

@@ -75,6 +75,16 @@ class Table(object):
             except Exception as e:
                 raise e
 
+    def _load_info_by_sql(self):
+        """
+        Loads metadata about this table.
+        """
+        if self._info is None:
+            try:
+                self._info = self._service.tables_get_by_sql("54a856b9-b1c6-4651-84ff-1f9428965a47")
+            except Exception as e:
+                raise e
+
     def _get_row_fetcher(self, start_row=0, max_rows=None, page_size=_DEFAULT_PAGE_SIZE):
         """
         Get a function that can retrieve a page of rows.
@@ -148,6 +158,77 @@ class Table(object):
 
         return _retrieve_rows
 
+    def _get_row_fetcher_by_sql(self, start_row=0, max_rows=None, page_size=_DEFAULT_PAGE_SIZE):
+        """
+        Get a function that can retrieve a page of rows.
+
+        Parameters
+        ----------
+            start_row: int
+                the row to start fetching from; default 0.
+
+            max_rows: int
+                the maximum number of rows to fetch (across all calls, not per-call). Default
+                is None which means no limit.
+
+            page_size: int
+                the maximum number of results to fetch per page; default 1024.
+
+        Returns
+        -------
+            `callable` A function that can be called repeatedly with a page token and running count, and that
+            will return an array of rows and a next page token; when the returned page token is None
+            the fetch is complete.
+
+        Notes
+        -----
+            The function returned is a closure so that it can have a signature suitable for use
+            by Iterator.
+
+        """
+        if not start_row:
+            start_row = 0
+        elif start_row < 0:  # We are measuring from the table end
+            if self.length >= 0:
+                start_row += self.length
+            else:
+                raise Exception('Cannot use negative indices for table of unknown length')
+
+        schema = self.schema_by_sql._bq_schema
+        name_parts = self._name_parts
+
+        def _retrieve_rows(page_token, count):
+            page_size = 5000
+            page_rows = []
+            if max_rows and count >= max_rows:
+                page_token = None
+            else:
+                if max_rows and page_size > (max_rows - count):
+                    max_results = max_rows - count
+                else:
+                    max_results = page_size
+
+                try:
+                    if page_token:
+                        response = self._service.tabledata_list_by_sql("54a856b9-b1c6-4651-84ff-1f9428965a47", page_token=page_token,
+                                                                max_results=max_results)
+                    else:
+                        response = self._service.tabledata_list_by_sql("54a856b9-b1c6-4651-84ff-1f9428965a47", start_index=start_row,
+                                                                max_results=max_results)
+                except Exception as e:
+                    raise e
+                page_token = response['pageToken'] if 'pageToken' in response else None
+                if 'rows' in response:
+                    page_rows = response['rows']
+
+            rows = []
+            for row_dict in page_rows:
+                rows.append(parser.Parser.parse_row(schema, row_dict))
+
+            return rows, page_token
+
+        return _retrieve_rows
+
     def to_dataframe(self, start_row=0, max_rows=None):
         """
         Exports the table to a Pandas dataframe.
@@ -184,12 +265,59 @@ class Table(object):
         ordered_fields = [field.name for field in self.schema]
         return df[ordered_fields] if df is not None else pandas.DataFrame()
 
+    def to_dataframe_by_sql(self, start_row=0, max_rows=None):
+        """
+        Exports the table to a Pandas dataframe.
+
+        Parameters
+        ----------
+            start_row: int
+                the row of the table at which to start the export (default 0)
+
+            max_rows: int
+                an upper limit on the number of rows to export (default None)
+
+        Returns
+        -------
+            :class:`pandas.DataFrame` containing the table data.
+
+        """
+        fetcher = self._get_row_fetcher_by_sql(start_row=start_row, max_rows=max_rows)
+        count = 0
+        page_token = None
+        df = None
+        while True:
+            page_rows, page_token = fetcher(page_token, count)
+            if len(page_rows):
+                count += len(page_rows)
+                if df is None:
+                    df = pandas.DataFrame.from_records(page_rows)
+                else:
+                    df = df.append(page_rows, ignore_index=True)
+            if not page_token:
+                break
+
+        # Need to reorder the dataframe to preserve column ordering
+        ordered_fields = [field.name for field in self.schema]
+        return df[ordered_fields] if df is not None else pandas.DataFrame()
+
     @property
     def schema(self):
         if not self._schema:
             try:
                 self._load_info()
-                self._schema = schema.Schema(self._info['matrixScheme']['fieldSchemes'])
+                self._schema = schema.Schema(self._info['schema']['fields'])
+
+            except KeyError:
+                raise exceptions.InternalError('Unexpected table response: missing schema')
+        return self._schema
+
+    @property
+    def schema_by_sql(self):
+        if not self._schema:
+            try:
+                self._load_info_by_sql()
+                self._schema = schema.Schema(self._info['schema']['fields'])
 
             except KeyError:
                 raise exceptions.InternalError('Unexpected table response: missing schema')

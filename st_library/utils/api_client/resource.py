@@ -42,11 +42,19 @@ def matrices_get(dataset_id, matrices_id):
                                   'datasets/{dataset_id}/matrices/{matrices_id}/data'.
                                   format(sec_id=Store.config_id, dataset_id=dataset_id, matrices_id=matrices_id))
 
+def matrices_get_by_sql(query_job_id):
+    return DATA_ENDPOINT.add_path('queries/{query_job_id}'.
+                                  format(query_job_id=query_job_id))
+
 
 def sec_matrices_get(sec_id, dataset_id, matrices_id):
     return DATA_ENDPOINT.add_path('script-execution-configurations/{sec_id}/datasets/'
                                   '{dataset_id}/matrices/{matrices_id}/data'.
                                   format(sec_id=sec_id, dataset_id=dataset_id, matrices_id=matrices_id))
+
+def sec_matrices_get_by_sql(query_job_id):
+    return DATA_ENDPOINT.add_path('queries/{query_job_id}'.
+                                  format(query_job_id=query_job_id))
 
 
 def sec_matrices_insert(sec_id, dataset_id, matrices_id):

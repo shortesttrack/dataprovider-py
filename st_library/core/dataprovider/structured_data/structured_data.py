@@ -58,3 +58,19 @@ class StructuredData(object):
         """
         tbl = self.Table(matrix_id, dataset_id, table_name, config_related=True)
         return tbl.to_dataframe()
+
+    def read_matrix_by_sql(self, sql):
+        """
+        Retrieve the table data from Script Execution Configuration Space by sql statement.
+
+        Parameters
+        ----------
+        sql : str
+
+        Returns
+        -------
+        :class:`pandas.DataFrame`
+
+        """
+        tbl = self.Table()
+        return tbl.to_dataframe_by_sql()
