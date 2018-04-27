@@ -99,7 +99,7 @@ class SecAccessTokenMixin(object):
             return True
 
         now = self._get_time_now()
-        seconds_diff = (sec_access_token_expiration - now).seconds
+        seconds_diff = (sec_access_token_expiration - now).total_seconds()
 
         if seconds_diff <= 20:
             return True
@@ -125,5 +125,5 @@ class SecAccessTokenMixin(object):
         public_key = self.get_public_key()
         util = jwt_util.JWTUtil(access_token)
         exp_string = util.extract_expiration_string(public_key)
-        expiration_datetime = datetime.fromtimestamp(exp_string, UTC)
+        expiration_datetime = datetime.utcfromtimestamp(exp_string).replace(tzinfo=UTC)
         return expiration_datetime

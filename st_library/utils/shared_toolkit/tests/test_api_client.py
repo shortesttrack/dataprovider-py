@@ -92,14 +92,14 @@ class TestSecAccessTokenMixin(InstantiateMixin, ApiClientSharedTestsMixin, unitt
             m.get(self.url_public_key_path_public_key, text=fixture_public_key, status_code=200)
 
             # noinspection PyUnresolvedReferences
-            with patch.object(self.api_client, '_get_time_now') as _get_time_now:
+            with patch.object(MockAccessTokenApiClient, '_get_time_now') as _get_time_now:
                 _get_time_now.return_value = datetime(year=2018, month=3, day=22, hour=10,
                                                       minute=3, second=0, tzinfo=UTC)
                 self.assertFalse(self.api_client._is_sec_access_token_expired('123'),
                                  'Must not be expired because is about minute difference')
 
             # noinspection PyUnresolvedReferences
-            with patch.object(self.api_client, '_get_time_now') as _get_time_now:
+            with patch.object(MockAccessTokenApiClient, '_get_time_now') as _get_time_now:
                 _get_time_now.return_value = datetime(year=2018, month=3, day=22, hour=10,
                                                       minute=4, second=0, tzinfo=UTC)
 
@@ -113,7 +113,7 @@ class TestSecAccessTokenMixin(InstantiateMixin, ApiClientSharedTestsMixin, unitt
             m.post(self.url_oauth_path_oauth_token, text=self.fixtures[self.FIXTURE_ACCESS_TOKEN], status_code=200)
 
             # noinspection PyUnresolvedReferences
-            with patch.object(self.api_client, '_get_time_now') as _get_time_now:
+            with patch.object(MockAccessTokenApiClient, '_get_time_now') as _get_time_now:
                 # (expired)
                 _get_time_now.return_value = datetime(year=2018, month=3, day=22, hour=10,
                                                       minute=4, second=0, tzinfo=UTC)
@@ -129,7 +129,7 @@ class TestSecAccessTokenMixin(InstantiateMixin, ApiClientSharedTestsMixin, unitt
                 self.assertEqual(self.fixtures[self.FIXTURE_ENCODED_TOKEN], cached_access_token)
 
             # noinspection PyUnresolvedReferences
-            with patch.object(self.api_client, '_get_time_now') as _get_time_now:
+            with patch.object(MockAccessTokenApiClient, '_get_time_now') as _get_time_now:
                 # (not expired)
                 _get_time_now.return_value = datetime(year=2018, month=3, day=22, hour=10,
                                                       minute=3, second=0, tzinfo=UTC)
@@ -146,7 +146,7 @@ class TestSecAccessTokenMixin(InstantiateMixin, ApiClientSharedTestsMixin, unitt
                   text=self.fixtures[self.FIXTURE_SIMPLE_RESPONSE], status_code=200)
 
             # noinspection PyUnresolvedReferences
-            with patch.object(self.api_client, '_get_time_now') as _get_time_now:
+            with patch.object(MockAccessTokenApiClient, '_get_time_now') as _get_time_now:
                 # (not expired)
                 _get_time_now.return_value = datetime(year=2018, month=3, day=22, hour=10,
                                                       minute=3, second=0, tzinfo=UTC)
@@ -172,7 +172,7 @@ class TestSecAccessTokenMixin(InstantiateMixin, ApiClientSharedTestsMixin, unitt
             m.get(self.url_using_sec_token_path_using_sec_token, status_code=401)
 
             # noinspection PyUnresolvedReferences
-            with patch.object(self.api_client, '_get_time_now') as _get_time_now:
+            with patch.object(MockAccessTokenApiClient, '_get_time_now') as _get_time_now:
                 # (not expired)
                 _get_time_now.return_value = datetime(year=2018, month=3, day=22, hour=10,
                                                       minute=3, second=0, tzinfo=UTC)
@@ -191,7 +191,7 @@ class TestSecAccessTokenMixin(InstantiateMixin, ApiClientSharedTestsMixin, unitt
             m.get(self.url_using_sec_token_path_using_sec_token, status_code=400)
 
             # noinspection PyUnresolvedReferences
-            with patch.object(self.api_client, '_get_time_now') as _get_time_now:
+            with patch.object(MockAccessTokenApiClient, '_get_time_now') as _get_time_now:
                 # (not expired)
                 _get_time_now.return_value = datetime(year=2018, month=3, day=22, hour=10,
                                                       minute=3, second=0, tzinfo=UTC)

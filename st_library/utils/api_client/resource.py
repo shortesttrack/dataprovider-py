@@ -2,7 +2,7 @@ from urlobject import URLObject
 from st_library.utils.helpers.store import Store
 
 
-ROOT = URLObject('https://shortesttrack.com')
+ROOT = URLObject(Store.host)
 
 METADATA_ENDPOINT = ROOT.add_path('api/metadata/')
 EXECUTION_METADATA_ENDPOINT = ROOT.add_path('api/execution-metadata/')
