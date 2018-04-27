@@ -101,6 +101,8 @@ class BaseApiClient(object):
         try:
             resp.raise_for_status()
         except requests.HTTPError as e:
+            self.logger.info(resp.content)
+
             if retry and resp.status_code in [401, 403]:
                 self._retry_occurred()
                 # Probably sec_access_token is expired, let's get a new one

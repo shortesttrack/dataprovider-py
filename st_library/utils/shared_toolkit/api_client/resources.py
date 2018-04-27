@@ -1,5 +1,5 @@
-import os
 from urlobject import URLObject
+import os
 
 
 ROOT = URLObject(os.environ.get('HOST', 'https://shortesttrack.com'))

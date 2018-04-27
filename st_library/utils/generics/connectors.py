@@ -63,7 +63,7 @@ class ConnectorContainer(object):
         names = self.names
         return self._list[0]
 
-    def _fetch_param_dict(self, *param_ids):
+    def _fetch_param_dict(self, param_ids):
         param_dict = dict()
         for param_id in param_ids:
             param_dict[param_id] = _METADATA.get_parameter_value(param_id)
