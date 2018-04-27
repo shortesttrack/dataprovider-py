@@ -52,3 +52,10 @@ class Metadata(object):
         performance_id = Store.performance_id
         ApiClient.post(ApiClient.res.performance_output_parameter_post(parameter_id, performance_id),
                        json={'value': parameter_value})
+
+    @property
+    def script_execution_configurations(self):
+        return self._script_execution_configurations
+
+
+_METADATA = Metadata()

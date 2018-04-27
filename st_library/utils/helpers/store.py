@@ -15,3 +15,5 @@ class Store(object):
     performance_id = os.environ.get('PERFORMANCE_ID')
 
     token_data = dict()
+
+    host = os.environ.get('HOST', 'https://shortesttrack.com')

@@ -12,7 +12,8 @@
 from st_library.core.dataprovider.structured_data.structured_data import StructuredData
 from st_library.core.dataprovider.unstructured_data.unstructured_data import UnstructuredData
 from st_library.core.logger.logger import Logger
-from st_library.core.metadata.metadata import Metadata
+from st_library.core.metadata.metadata import _METADATA
+from st_library.utils.databases.databases import Databases
 from st_library.utils.generics.singleton import Singleton
 from st_library.utils.helpers.store import Store
 
@@ -70,7 +71,8 @@ class Library(Singleton):
         self.struct_data = StructuredData()
         self.unstruct_data = UnstructuredData()
         self.logger = Logger()
-        self.metadata = Metadata()
+        self.metadata = _METADATA
+        self.databases = Databases()
 
     @property
     def config_id(self):
