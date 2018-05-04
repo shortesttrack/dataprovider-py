@@ -42,8 +42,7 @@ class _SharedApiClientAdapter(BaseApiClient, SecAccessTokenMixin):
         return Store.token_data.get('expiration')
 
     def _get_auth_string(self):
-        return 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjNDkzZmI5MS02YWE4LTRiODItYjA2Ni0wZTkxYzQ4MjZkOTciLCJhdWQiOlsid2ViX2FwcCJdLCJjb21wYW55SWQiOiJzaG9ydGVzdHRyYWNrX3Jvb3RfYWRtaW5fY29tcGFueSIsInNjb3BlIjpbIm9wZW5pZCJdLCJpc3MiOiJzaG9ydGVzdHRyYWNrLXVhYSIsImV4cCI6MTUyMzcwNjU0OCwiaWF0IjoxNTIzNzA2MjQ4LCJhdXRob3JpdGllcyI6WyJST0xFX1JPT1QiXSwianRpIjoiNzlhOTEyNTktODc2Mi00OTE0LTgxOTgtMTVhOTk0M2ExMzQwIiwiZW1haWwiOiJyb290QGxvY2FsaG9zdCIsImNsaWVudF9pZCI6IndlYl9hcHAifQ.fBOQBe_y7gJO_Rm45o1HlnObkpoEPz0o22A0crlH1CAnYgSmGYog4yU4OuWveVQqNK92Lmsl2M2M7f_Hyqbret8b56PwEiLCOVlIqGPrtwXrfQJfNUoYGwELEpWBD4ERv2Kc8OHivRJp92Qvb9eUmkQ01S31dVj5OU0tbJRSZOk8CiOkmrM3oyIfSqp63dIBQWDmjnlMgrJ7nXsUH_yK5UdzmcPJgdGIk3QxaLbjZDlaewB2Ghc-sdCyOXKcxjK1GinIdAW5d6ZJAp4RcDDnM1Tg1h-TLoxPTk2u09zj7OS67luyaS_0xPMVI0TaF74FKf7TVOPqV0Jv8WxrVVb90Q'
-        # return ''
+        return ''
 
     def get_sec_refresh_token(self, configuration_id):
         return Store.token
@@ -93,8 +92,8 @@ def get(url, params=None, data=None, json=None, extra_headers=None, raw_response
 
 
 def post(url, params=None, data=None, json=None, extra_headers=None, raw_response=False, stats=None):
-    if data is None:
-        raise exceptions.InternalError('Cannot perform POST request without data')
+    if data is None and json is None:
+        raise exceptions.InternalError('Cannot perform POST request without data and json')
 
     return _adapter.request(_adapter.POST, '', params=params, data=data, json=json, base=url,
                             extra_headers=extra_headers, sec_id_for_special_token=Store.config_id,
