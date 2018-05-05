@@ -59,7 +59,7 @@ class StructuredData(object):
         tbl = self.Table(matrix_id, dataset_id, table_name, config_related=True)
         return tbl.to_dataframe()
 
-    def read_matrix_by_sql(self, sql):
+    def read_matrix_by_sql(self, sql_query, max_rows=None):
         """
         Retrieve the table data from Script Execution Configuration Space by sql statement.
 
@@ -72,5 +72,12 @@ class StructuredData(object):
         :class:`pandas.DataFrame`
 
         """
+        # begin_date = datetime.date.today()-datetime.timedelta(duration)
+        # regex_date = re.search(u'\d{4}\-\d{1,2}\-\d{1,2}', sql_query)
+        # if regex_date:
+        #     sql_date = datetime.datetime.strptime(regex_date[0], "%Y-%m-%d")
+        #     if (datetime.datetime.today() - sql_date).days > 7:
+        #         print('true')
+
         tbl = self.Table()
-        return tbl.to_dataframe_by_sql()
+        return tbl.to_dataframe_by_sql(sql_query=sql_query, max_rows=max_rows)

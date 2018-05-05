@@ -89,8 +89,11 @@ class BaseApiClient(object):
         def _request():
             try:
                 self.logger.info('Calling metadata service (%s) : %s', http_method, url)
+                #print('Request data:')
+                #print(data)
                 resp_ = requests.request(http_method, url,
                                          params=params, data=data, json=json, headers=headers, auth=auth)
+
             except requests.RequestException as e_:
                 self.logger.info('Outer service request error: {}'.format(e_))
                 self._raise_performing_request_error('Error of request performing.: {}'.format(e_))
@@ -110,11 +113,17 @@ class BaseApiClient(object):
                 # Retry request
                 resp = _request()
                 try:
+                    # print(resp.request.body)
+                    # print(resp.content)
                     resp.raise_for_status()
                 except requests.HTTPError as e:
                     # This is not access_token expiration, raise exception
+                    print(resp.request.body)
+                    print(resp.content)
                     self._raise_http_error(resp.status_code, resp.reason)
             else:
+                print(resp.request.body)
+                print(resp.content)
                 self._raise_http_error(resp.status_code, resp.reason)
 
         except Exception as e:
