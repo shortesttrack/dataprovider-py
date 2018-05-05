@@ -4,13 +4,12 @@ from st_library.utils.generics.connectors import ConnectorContainer
 
 
 class Postgres(object):
-    def __init__(self, name, host, port, username, password, uses_google_sql):
+    def __init__(self, name, host, port, username, password):
         self._name = name
         self._host = host
         self._port = port
         self._username = username
         self._password = password
-        self._uses_google_sql = uses_google_sql
         # TODO: uses_google_sql
         self._conn = psycopg2.connect(database=self._name,
                                       user=self._username,
@@ -34,7 +33,7 @@ class PostgresContainer(ConnectorContainer):
         assert not len(self._list)
 
         params = self._fetch_param_dict([
-            'psql_host', 'psql_name', 'psql_username', 'psql_password', 'psql_port', 'uses_google_sql'
+            'psql_host', 'psql_name', 'psql_username', 'psql_password', 'psql_port'
         ])
 
         list_of_servers_params = [params]
@@ -42,7 +41,7 @@ class PostgresContainer(ConnectorContainer):
         for server in list_of_servers_params:
             obj = Postgres(server['psql_name'], server['psql_host'],
                            int(server['psql_port']), server['psql_username'],
-                           server['psql_password'], self._get_bool_uses_google_sql(server['uses_google_sql']))
+                           server['psql_password'])
             self._list.append(obj)
             self._dict[obj.name] = obj
 
