@@ -12,4 +12,4 @@ class ScriptExecutionConfiguration(BaseModel):
             if parameter['id'] == parameter_id:
                 return parameter['value']
 
-        raise ValueError('Parameter does not exist')
+        raise ValueError('Parameter {} does not exist'.format(parameter_id))

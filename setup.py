@@ -14,7 +14,7 @@
 
 from setuptools import setup, find_packages
 
-version = '1.0.9'
+version = '1.0.11'
 
 setup(
     name='st-dataprovider',
@@ -24,7 +24,7 @@ setup(
     author='Fugui Xing',
     author_email='admin@shortesttrack.com',
     url='https://github.com/shortesttrack/dataprovider-py',
-    download_url='https://github.com/shortesttrack/dataprovider-py/archive/v1.0.9',
+    download_url='https://github.com/shortesttrack/dataprovider-py/archive/v1.0.11',
     keywords=[
         'Shortest Track',
         'st_library',
@@ -53,6 +53,8 @@ for accessing Shortest Track Platform services such as structured data storage.
         'PyJWT==1.6.1',
         'cryptography==2.2.1',
         'mock==2.0.0',
-        'pytz==2018.3'
+        'pytz==2018.3',
+        'psycopg2-binary==2.7.4',
+        'redis==2.10.6'
     ]
 )

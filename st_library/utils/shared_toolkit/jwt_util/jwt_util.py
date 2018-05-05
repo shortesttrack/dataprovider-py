@@ -11,13 +11,16 @@ class JWTUtil(object):
     def __init__(self, jwt_token):
         self.jwt_token = jwt_token
 
-    def decode(self, public_key):
+    def decode(self, public_key, verify_exp=False):
         try:
             decoded = jwt.decode(self.jwt_token, public_key,
-                                 algorithms='RS256', options={'verify_exp': False}, audience=['web_app'])
-        except InvalidTokenError:
-            raise self.InvalidTokenError
+                                 algorithms='RS256', options={'verify_exp': verify_exp}, audience=['web_app'])
+        except InvalidTokenError as e:
+            raise self.InvalidTokenError(str(e))
         return decoded
+
+    def authenticate(self, public_key):
+        return self.decode(public_key, True)
 
     def extract_info_no_verify(self):
         return jwt.decode(self.jwt_token, verify=False)

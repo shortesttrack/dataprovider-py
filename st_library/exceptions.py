@@ -54,3 +54,16 @@ class SchemaCreationError(LibraryException):
     An error of schema creation
 
     """
+
+
+class DatabaseConnectionError(LibraryException):
+    """
+    An error of connection to database
+
+    """
+
+
+class DatabaseNotFound(LibraryException):
+    """
+    An error raising after try to access the missing database
+    """
