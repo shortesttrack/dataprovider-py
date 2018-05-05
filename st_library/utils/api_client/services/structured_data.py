@@ -21,6 +21,31 @@ from st_library.utils.api_client import ApiClient
 class StructuredDataService(object):
     """A helper class to issue BigQuery HTTP requests."""
 
+    def sec_tables_get_by_sql(self, sql_statement, start_index=None, max_results=None, page_token=None):
+        """Posts a SQL request to retrieve query_job_id
+
+        Args:
+            sql_statement: .
+        Returns:
+            A parsed result object.
+        Raises:
+            Exception if there is an error performing the operation.
+        """
+        url = ApiClient.res.sec_get_query_id(Store.config_id)
+
+        body_sql = {'allowLargeResults': False,
+                    'query': sql_statement}
+
+        params = {}
+        if start_index:
+            params['startIndex'] = start_index
+        if max_results:
+            params['maxResults'] = max_results
+        if page_token is not None:
+            params['pageToken'] = page_token
+
+        return ApiClient.post(url, json=body_sql, params=params)
+
     def tables_get(self, dataset_id, matrices_id):
         """Issues a request to retrieve information about a table.
 
@@ -46,6 +71,19 @@ class StructuredDataService(object):
           Exception if there is an error performing the operation.
         """
         return ApiClient.get(ApiClient.res.matrices_get_by_sql(query_job_id))
+
+    def tables_get_by_sql_query(self, query_job_id):
+        """Issues a request to retrieve information about a table.
+
+        Args:
+          dataset_id: .
+          matrices_id: .
+        Returns:
+          A parsed result object.
+        Raises:
+          Exception if there is an error performing the operation.
+        """
+        return ApiClient.post(ApiClient.res.sec_get_query_id(query_job_id))
 
     def tables_get_parameters(self):
         """Issues a request to retrieve the parameter of the script execution configuration.

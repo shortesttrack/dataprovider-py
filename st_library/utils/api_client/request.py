@@ -93,7 +93,7 @@ def get(url, params=None, data=None, json=None, extra_headers=None, raw_response
 
 
 def post(url, params=None, data=None, json=None, extra_headers=None, raw_response=False, stats=None):
-    if data is None:
+    if data is None and json is None:
         raise exceptions.InternalError('Cannot perform POST request without data')
 
     return _adapter.request(_adapter.POST, '', params=params, data=data, json=json, base=url,
