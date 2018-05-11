@@ -17,6 +17,7 @@ from st_library.core.dataprovider.structured_data import parser
 from st_library.core.dataprovider.structured_data import schema
 from st_library.utils.api_client.services.structured_data import StructuredDataService
 from st_library import exceptions
+from time import sleep
 
 
 # import of Query is at end of module as we have a circular dependency of
@@ -283,12 +284,19 @@ class Table(object):
             else:
                 raise Exception('Cannot use negative indices for table of unknown length')
 
-        schema = self.schema_by_sql_query(sql_query)._bq_schema
         name_parts = self._name_parts
 
         def _retrieve_rows(page_token, count):
             page_size = 5000
             page_rows = []
+
+            # print('max rows:')
+            # print(max_rows)
+            # print('count:')
+            # print(count)
+            # print('page token:')
+            # print(page_token)
+
             if max_rows and count >= max_rows:
                 page_token = None
             else:
@@ -299,21 +307,35 @@ class Table(object):
                 try:
                     if page_token:
                         response = self._service.sec_tables_get_by_sql(sql_query, page_token=page_token,
-                                                                max_results=max_results)
+                                                                       max_results=max_results)
+                        if not response['jobComplete']:
+                            if response.get('jobReference'):
+                                job_query_id = response['jobReference']['jobId']
+                            else:
+                                job_query_id = response['id']
 
-                        if response['jobComplete'] == False and response['jobReference']:
-                            job_query_id = response['jobReference']['jobId']
-                            response = self._service.tabledata_list_by_sql(job_query_id, page_token=page_token,
-                                                                           max_results=max_results)
-
+                            while True:
+                                response = self._service.tabledata_list_by_sql(job_query_id, page_token=page_token,
+                                                                               max_results=max_results)
+                                if response['jobComplete']:
+                                    break
+                                sleep(1.5)
 
                     else:
                         response = self._service.sec_tables_get_by_sql(sql_query, start_index=start_row,
-                                                                max_results=max_results)
-                        if response['jobComplete'] == False and response['jobReference']:
-                            job_query_id = response['jobReference']['jobId']
-                            response = self._service.tabledata_list_by_sql(job_query_id, start_index=start_row,
-                                                                           max_results=max_results)
+                                                                       max_results=max_results)
+                        if not response['jobComplete']:
+                            if response.get('jobReference'):
+                                job_query_id = response['jobReference']['jobId']
+                            else:
+                                job_query_id = response['id']
+
+                            while True:
+                                response = self._service.tabledata_list_by_sql(job_query_id, start_index=start_row,
+                                                                               max_results=max_results)
+                                if response['jobComplete']:
+                                    break
+                                sleep(1.5)
 
                 except Exception as e:
                     raise e
@@ -322,8 +344,11 @@ class Table(object):
                     page_rows = response['rows']
 
             rows = []
+
+            bq_schema = self.schema_by_sql_query(sql_query)._bq_schema
+
             for row_dict in page_rows:
-                rows.append(parser.Parser.parse_row(schema, row_dict))
+                rows.append(parser.Parser.parse_row(bq_schema, row_dict))
 
             return rows, page_token
 
