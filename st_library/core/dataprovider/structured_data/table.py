@@ -96,6 +96,13 @@ class Table(object):
             except Exception as e:
                 raise e
 
+    def _load_info_by_response(self, response):
+        """
+        Loads metadata about this table.
+        """
+        if self._info is None:
+            self._info = response
+
     def _get_row_fetcher(self, start_row=0, max_rows=None, page_size=_DEFAULT_PAGE_SIZE):
         """
         Get a function that can retrieve a page of rows.
@@ -299,6 +306,7 @@ class Table(object):
 
             if max_rows and count >= max_rows:
                 page_token = None
+                return [], page_token
             else:
                 if max_rows and page_size > (max_rows - count):
                     max_results = max_rows - count
@@ -345,7 +353,7 @@ class Table(object):
 
             rows = []
 
-            bq_schema = self.schema_by_sql_query(sql_query)._bq_schema
+            bq_schema = self.schema_by_response(response).bq_schema
 
             for row_dict in page_rows:
                 rows.append(parser.Parser.parse_row(bq_schema, row_dict))
@@ -474,6 +482,17 @@ class Table(object):
         if not self._schema:
             try:
                 self._load_info_by_sql_query(sql_query)
+                self._schema = schema.Schema(self._info['schema']['fields'])
+
+            except KeyError:
+                raise exceptions.InternalError('Unexpected table response: missing schema. Response content: {}'.
+                                               format(self._info))
+        return self._schema
+
+    def schema_by_response(self, response):
+        if not self._schema:
+            try:
+                self._load_info_by_response(response)
                 self._schema = schema.Schema(self._info['schema']['fields'])
 
             except KeyError:

@@ -14,6 +14,7 @@
 import datetime
 import pandas
 from st_library import exceptions
+import six
 
 
 class Schema(list):
@@ -43,6 +44,10 @@ class Schema(list):
         self._map = {}
         self._bq_schema = definition
         self._populate_fields(definition)
+
+    @property
+    def bq_schema(self):
+        return self._bq_schema
 
     class Field(object):
         """
@@ -356,7 +361,7 @@ class Schema(list):
     def __getitem__(self, key):
         """Provides ability to lookup a schema field by position or by name.
         """
-        if isinstance(key, basestring):
+        if isinstance(key, six.string_types):
             return self._map.get(key, None)
         # noinspection PyCallByClass
         return list.__getitem__(self, key)
