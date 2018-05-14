@@ -477,7 +477,8 @@ class Table(object):
                 self._schema = schema.Schema(self._info['schema']['fields'])
 
             except KeyError:
-                raise exceptions.InternalError('Unexpected table response: missing schema')
+                raise exceptions.InternalError('Unexpected table response: missing schema. Response content: {}'.
+                                               format(self._info))
         return self._schema
 
     def upload_data(self, filename=None):
