@@ -132,7 +132,10 @@ class BaseApiClient(object):
             raise
 
         if not raw_content:
-            return resp.json()
+            try:
+                return resp.json()
+            except:
+                return {}
 
         return resp.content
 
