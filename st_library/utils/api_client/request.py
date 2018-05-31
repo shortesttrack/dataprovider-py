@@ -11,9 +11,9 @@
 # the License.
 
 """Implements HTTP client helper functionality."""
-import datetime
 
-import requests
+import traceback
+from logging import getLogger
 
 from st_library import exceptions
 from st_library.utils.helpers.store import Store
@@ -22,6 +22,9 @@ from st_library.utils.shared_toolkit.api_client import BaseApiClient, SecAccessT
 METHOD_GET = 'get'
 METHOD_POST = 'post'
 METHOD_DELETE = 'delete'
+
+
+logger = getLogger('st-lib')
 
 
 class DisabledLogger(object):
@@ -55,7 +58,7 @@ class _SharedApiClientAdapter(BaseApiClient, SecAccessTokenMixin):
         return ('script', 'noMatter',)
 
     def _raise_performing_request_error(self, *args, **kwargs):
-        raise exceptions.ServiceRequestError(*args, **kwargs)
+        raise exceptions.ServiceRequestError(None, *args, **kwargs)
 
     def _set_cache_sec_access_token(self, configuration_id, access_token):
         Store.token_data['access_token'] = access_token
@@ -79,28 +82,44 @@ class _SharedApiClientAdapter(BaseApiClient, SecAccessTokenMixin):
         if kwargs.get('extra_headers') is None:
             kwargs['extra_headers'] = {}
         kwargs['extra_headers']['User-Agent'] = 'st-dataprovider/1.0'
-        return super(_SharedApiClientAdapter, self).request(*args, **kwargs)
+
+        fail_silently = kwargs.pop('fail_silently', False)
+
+        if fail_silently:
+            try:
+                result = super(_SharedApiClientAdapter, self).request(*args, **kwargs)
+            except Exception as e:
+                logger.error('Unexpected request error to %s : %s : %s', kwargs.get('base'),
+                             str(e), traceback.format_exc())
+                return None
+        else:
+            result = super(_SharedApiClientAdapter, self).request(*args, **kwargs)
+
+        return result
 
 
 _adapter = _SharedApiClientAdapter()
 
 
-def get(url, params=None, data=None, json=None, extra_headers=None, raw_response=False, stats=None):
+def get(url, params=None, data=None, json=None, extra_headers=None, raw_response=False, stats=None,
+        fail_silently=False):
     return _adapter.request(_adapter.GET, '', params=params, data=data, json=json, base=url,
                             extra_headers=extra_headers, sec_id_for_special_token=Store.config_id,
-                            raw_content=raw_response)
+                            raw_content=raw_response, fail_silently=fail_silently)
 
 
-def post(url, params=None, data=None, json=None, extra_headers=None, raw_response=False, stats=None):
+def post(url, params=None, data=None, json=None, extra_headers=None, raw_response=False, stats=None,
+         fail_silently=False):
     if data is None and json is None:
         raise exceptions.InternalError('Cannot perform POST request without data and json')
 
     return _adapter.request(_adapter.POST, '', params=params, data=data, json=json, base=url,
                             extra_headers=extra_headers, sec_id_for_special_token=Store.config_id,
-                            raw_content=raw_response)
+                            raw_content=raw_response, fail_silently=fail_silently)
 
 
-def delete(url, params=None, data=None, json=None, extra_headers=None, raw_response=False, stats=None):
+def delete(url, params=None, data=None, json=None, extra_headers=None, raw_response=False, stats=None,
+           fail_silently=False):
     return _adapter.request(_adapter.DELETE, '', params=params, data=data, json=json, base=url,
                             extra_headers=extra_headers, sec_id_for_special_token=Store.config_id,
-                            raw_content=raw_response)
+                            raw_content=raw_response, fail_silently=fail_silently)

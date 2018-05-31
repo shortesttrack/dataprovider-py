@@ -74,7 +74,8 @@ class Logger(object):
                 'analysis': analysis,
                 'data': message
             }
-            ApiClient.post(ApiClient.res.logging_post(Store.performance_id), json=payload, raw_response=True)
+            ApiClient.post(ApiClient.res.logging_post(Store.performance_id), json=payload,
+                           raw_response=True, fail_silently=True)
         else:
             six.print_(self._format_message(message, level))
 
