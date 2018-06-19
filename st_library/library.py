@@ -9,13 +9,17 @@
 # is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
+from enum import Enum
+
 from st_library.core.dataprovider.structured_data.structured_data import StructuredData
 from st_library.core.dataprovider.unstructured_data.unstructured_data import UnstructuredData
 from st_library.core.logger.logger import Logger
-from st_library.core.metadata.metadata import _METADATA
+from st_library.core.metadata.metadata import Metadata
 from st_library.utils.databases.databases import Databases
 from st_library.utils.generics.singleton import Singleton
 from st_library.utils.helpers.store import Store
+from st_library.utils.api_client.models.iscript_service_configuration import IScriptServiceConfiguration
+from st_library.utils.api_client.models.script_execution_configuration import ScriptExecutionConfiguration
 
 
 __all__ = ('Library',)
@@ -66,12 +70,15 @@ class Library(Singleton):
         >>> table.upload_data('/foo/bar.csv')
 
     """
+    class MetadataConfigType(Enum):
+        ISSC = IScriptServiceConfiguration
+        SEC = ScriptExecutionConfiguration
 
-    def __init__(self):
+    def __init__(self, metadata_configuration_type=MetadataConfigType.SEC):
         self.struct_data = StructuredData()
         self.unstruct_data = UnstructuredData()
         self.logger = Logger()
-        self.metadata = _METADATA
+        self.metadata = Metadata(metadata_configuration_type.value)
         self.databases = Databases()
 
     @property

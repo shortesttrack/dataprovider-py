@@ -1,1 +1,2 @@
 from .script_execution_configuration import ScriptExecutionConfiguration
+from .iscript_service_configuration import IScriptServiceConfiguration

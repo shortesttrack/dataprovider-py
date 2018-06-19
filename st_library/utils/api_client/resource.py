@@ -14,6 +14,9 @@ GETTOKEN_ENDPOINT = ROOT.add_path('api/uaa/api-keys/')
 
 PERFORMANCES_LIST_GET_PATH = EXECUTION_METADATA_ENDPOINT.add_path('v2/performances/')
 
+def issc_get_detail(uuid):
+    return EXECUTION_METADATA_ENDPOINT.add_path('/v2/issc/{uuid}'.format(uuid=uuid))
+
 def sec_get_token(uuid):
     return GETTOKEN_ENDPOINT.add_path('{uuid}'.format(uuid=uuid))
 
