@@ -12,8 +12,8 @@ class Metadata(object):
 
     """
 
-    def __init__(self):
-        self._script_execution_configurations = defaultdict(ScriptExecutionConfiguration)
+    def __init__(self, configuration_base_model=ScriptExecutionConfiguration):
+        self._script_execution_configurations = defaultdict(configuration_base_model)
 
     def get_parameter_value(self, parameter_id):
         """

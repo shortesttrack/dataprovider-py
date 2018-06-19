@@ -12,4 +12,8 @@ class IScriptServiceConfiguration(BaseModel):
             if parameter['id'] == parameter_id:
                 return parameter['value']
 
+        value = self.get(parameter_id)
+        if not value is None:
+            return value
+
         raise ValueError('Parameter {} does not exist'.format(parameter_id))
