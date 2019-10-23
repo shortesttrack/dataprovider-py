@@ -51,7 +51,7 @@ for accessing Shortest Track Platform services such as structured data storage.
         'six==1.11.0',
         'python-dateutil==2.7.0',
         'PyJWT==1.6.1',
-        'cryptography==2.2.1',
+        'cryptography==2.3',
         'mock==2.0.0',
         'pytz==2018.3',
         'psycopg2-binary==2.7.4',
