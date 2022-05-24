@@ -50,7 +50,7 @@ for accessing Shortest Track Platform services such as structured data storage.
         'urlobject==2.4.3',
         'six==1.11.0',
         'python-dateutil==2.7.0',
-        'PyJWT==1.6.1',
+        'PyJWT==2.4.0',
         'cryptography==2.2.1',
         'mock==2.0.0',
         'pytz==2018.3',
